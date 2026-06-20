@@ -36,9 +36,7 @@ for event_file in event_files:
 
     filepath = os.path.join(DATA_DIR, event_file)
 
-    print(f"\n--- {event_file} ---")
-
-    game_count = 0
+    found = False
 
     with open(filepath, encoding="latin-1") as f:
 
@@ -46,11 +44,10 @@ for event_file in event_files:
 
             line = line.strip()
 
-            if line.startswith("id,"):
-
+            if line.startswith("sub,"):
                 print(line)
+                found = True
+                break
 
-                game_count += 1
-
-                if game_count >= 5:
-                    break
+    if found:
+        break
