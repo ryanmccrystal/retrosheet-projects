@@ -86,7 +86,7 @@ for event_file in event_files:
             "opponent": opponent,
             "home_away": home_away,
             "inning": current_inning,
-            "count": len(streak),
+            "streak": len(streak),
             "player_1": "",
             "player_2": "",
             "player_3": "",
@@ -215,15 +215,15 @@ for event_file in event_files:
 
 # Write CSV
 
-output_file = "b2b_hr_streaks_2025.csv"
+output_file = "cleveland_hr_streaks_2000_2025.csv"
 
 fieldnames = [
     "date",
     "game_id",
-    "team",
     "opponent",
+    "home_away",
     "inning",
-    "count",
+    "streak",
     "player_1",
     "player_2",
     "player_3",
