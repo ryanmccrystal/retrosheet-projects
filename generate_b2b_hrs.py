@@ -84,6 +84,7 @@ for event_file in event_files:
         )
 
         row = {
+            "year": current_date[:4],
             "date": current_date,
             "game_id": current_game_id,
             "opponent": opponent,
@@ -111,9 +112,6 @@ for event_file in event_files:
         for raw_line in f:
 
             line = raw_line.strip()
-
-            if current_date == "2010/08/15":
-                print(line)
 
             # New game
             if line.startswith("id,"):
@@ -150,12 +148,6 @@ for event_file in event_files:
 
             if line.startswith("info,gametype,"):
                 gametype = line.split(",")[2]
-
-                # TEMPORARY DEBUG
-                if current_date and current_date.startswith("2000"):
-                    print("2000 gametype:", gametype)
-
-                continue
 
             # Player lookup
             if line.startswith("start,"):
@@ -226,7 +218,7 @@ for event_file in event_files:
 
 # Write CSV
 
-output_file = "cleveland_hr_streaks_2000_2025.csv"
+output_file = "cleveland_hr_streaks_1910_2025.csv"
 
 fieldnames = [
     "year",
