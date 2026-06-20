@@ -37,8 +37,25 @@ first_file = os.path.join(DATA_DIR, event_files[0])
 
 print(f"\nReading: {event_files[0]}\n")
 
-# Open first file and list all HRs
+player_lookup = {}
 
+# First pass: build player lookup
+with open(first_file, encoding="latin-1") as f:
+
+    for line in f:
+
+        line = line.strip()
+
+        if line.startswith("start,"):
+
+            fields = line.split(",")
+
+            player_id = fields[1]
+            player_name = fields[2].replace('"', "")
+
+            player_lookup[player_id] = player_name
+
+# Second pass: find HRs
 with open(first_file, encoding="latin-1") as f:
 
     hr_count = 0
@@ -54,13 +71,18 @@ with open(first_file, encoding="latin-1") as f:
 
         inning = fields[1]
         team = fields[2]
-        batter = fields[3]
+        batter_id = fields[3]
         event = fields[6]
 
         if event.startswith("HR"):
 
+            batter_name = player_lookup.get(
+                batter_id,
+                batter_id
+            )
+
             print(
-                f"Inning {inning} | Team {team} | Batter {batter} | {event}"
+                f"Inning {inning} | Team {team} | {batter_name}"
             )
 
             hr_count += 1
