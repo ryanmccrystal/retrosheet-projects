@@ -90,15 +90,10 @@ for event_file in event_files:
             "opponent": opponent,
             "home_away": home_away,
             "inning": current_inning,
-            "streak": len(streak),
-            "player_1": "",
-            "player_2": "",
-            "player_3": "",
-            "player_4": "",
-            "player_5": ""
+            "streak": len(streak)
         }
 
-        for i, player in enumerate(streak[:5]):
+        for i, player in enumerate(streak):
             row[f"player_{i+1}"] = player
 
         results.append(row)
@@ -216,6 +211,11 @@ for event_file in event_files:
         # End of file
         save_streak()
 
+max_streak = max(
+    row["streak"]
+    for row in results
+)
+
 # Write CSV
 
 output_file = "cleveland_hr_streaks_1910_2025.csv"
@@ -227,13 +227,11 @@ fieldnames = [
     "opponent",
     "home_away",
     "inning",
-    "streak",
-    "player_1",
-    "player_2",
-    "player_3",
-    "player_4",
-    "player_5"
+    "streak"
 ]
+
+for i in range(1, max_streak + 1):
+    fieldnames.append(f"player_{i}")
 
 with open(output_file, "w", newline="", encoding="utf-8") as f:
 
