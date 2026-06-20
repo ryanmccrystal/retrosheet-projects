@@ -51,9 +51,6 @@ for event_file in event_files:
 
     filepath = event_file
 
-    if "2010CLE.EVA" not in filepath:
-        continue
-
     current_game_id = None
     current_date = None
     visteam = None
