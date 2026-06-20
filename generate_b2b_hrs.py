@@ -39,7 +39,6 @@ print(f"\nReading: {event_files[0]}\n")
 
 player_lookup = {}
 
-# First pass: build player lookup
 with open(first_file, encoding="latin-1") as f:
 
     for line in f:
@@ -55,10 +54,14 @@ with open(first_file, encoding="latin-1") as f:
 
             player_lookup[player_id] = player_name
 
-# Second pass: find HRs
-with open(first_file, encoding="latin-1") as f:
+streak = []
 
-    hr_count = 0
+current_inning = None
+current_team = None
+
+print("\nBack-to-back HR streaks found:\n")
+
+with open(first_file, encoding="latin-1") as f:
 
     for line in f:
 
@@ -70,22 +73,57 @@ with open(first_file, encoding="latin-1") as f:
         fields = line.split(",")
 
         inning = fields[1]
-        team = fields[2]
+        batting_team = fields[2]
         batter_id = fields[3]
         event = fields[6]
 
-        if event.startswith("HR"):
+        batter_name = player_lookup.get(
+            batter_id,
+            batter_id
+        )
 
-            batter_name = player_lookup.get(
-                batter_id,
-                batter_id
-            )
+        is_hr = event.startswith("HR")
 
-            print(
-                f"Inning {inning} | Team {team} | {batter_name}"
-            )
+        # New inning or new batting team
+        if (
+            inning != current_inning
+            or batting_team != current_team
+        ):
 
-            hr_count += 1
+            if len(streak) >= 2:
 
-            if hr_count >= 20:
-                break
+                print(
+                    f"Inning {current_inning} "
+                    f"Team {current_team}: "
+                    + ", ".join(streak)
+                )
+
+            streak = []
+
+            current_inning = inning
+            current_team = batting_team
+
+        if is_hr:
+
+            streak.append(batter_name)
+
+        else:
+
+            if len(streak) >= 2:
+
+                print(
+                    f"Inning {current_inning} "
+                    f"Team {current_team}: "
+                    + ", ".join(streak)
+                )
+
+            streak = []
+
+# Catch streak at EOF
+if len(streak) >= 2:
+
+    print(
+        f"Inning {current_inning} "
+        f"Team {current_team}: "
+        + ", ".join(streak)
+    )
