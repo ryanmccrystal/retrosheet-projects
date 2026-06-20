@@ -32,98 +32,137 @@ event_files = sorted([
 
 print(f"Found {len(event_files)} event files")
 
-# Open first file
-first_file = os.path.join(DATA_DIR, event_files[0])
+results = []
 
-print(f"\nReading: {event_files[0]}\n")
+for event_file in event_files:
 
-player_lookup = {}
+    filepath = os.path.join(DATA_DIR, event_file)
 
-with open(first_file, encoding="latin-1") as f:
+    player_lookup = {}
 
-    for line in f:
+    game_date = None
+    visteam = None
+    hometeam = None
 
-        line = line.strip()
+    current_inning = None
+    current_team = None
 
-        if line.startswith("start,"):
+    streak = []
+
+    # Build player lookup and gather game info
+    with open(filepath, encoding="latin-1") as f:
+
+        for line in f:
+
+            line = line.strip()
+
+            if line.startswith("info,date,"):
+                game_date = line.split(",")[2]
+
+            elif line.startswith("info,visteam,"):
+                visteam = line.split(",")[2]
+
+            elif line.startswith("info,hometeam,"):
+                hometeam = line.split(",")[2]
+
+            elif line.startswith("start,"):
+
+                fields = line.split(",")
+
+                player_lookup[fields[1]] = (
+                    fields[2].replace('"', '')
+                )
+
+    # Scan plays
+    with open(filepath, encoding="latin-1") as f:
+
+        for line in f:
+
+            line = line.strip()
+
+            if not line.startswith("play,"):
+                continue
 
             fields = line.split(",")
 
-            player_id = fields[1]
-            player_name = fields[2].replace('"', "")
+            inning = fields[1]
+            batting_team = fields[2]
+            batter_id = fields[3]
+            event = fields[6]
 
-            player_lookup[player_id] = player_name
+            batter_name = player_lookup.get(
+                batter_id,
+                batter_id
+            )
 
-streak = []
+            team_abbr = (
+                visteam
+                if batting_team == "0"
+                else hometeam
+            )
 
-current_inning = None
-current_team = None
+            opponent = (
+                hometeam
+                if batting_team == "0"
+                else visteam
+            )
 
-print("\nBack-to-back HR streaks found:\n")
+            # inning/team changed
+            if (
+                inning != current_inning
+                or batting_team != current_team
+            ):
 
-with open(first_file, encoding="latin-1") as f:
+                if len(streak) >= 2:
 
-    for line in f:
+                    results.append({
+                        "date": game_date,
+                        "team": team_abbr,
+                        "opponent": opponent,
+                        "inning": current_inning,
+                        "players": streak.copy()
+                    })
 
-        line = line.strip()
+                streak = []
 
-        if not line.startswith("play,"):
-            continue
+                current_inning = inning
+                current_team = batting_team
 
-        fields = line.split(",")
+            if event.startswith("HR"):
 
-        inning = fields[1]
-        batting_team = fields[2]
-        batter_id = fields[3]
-        event = fields[6]
+                streak.append(batter_name)
 
-        batter_name = player_lookup.get(
-            batter_id,
-            batter_id
-        )
+            else:
 
-        is_hr = event.startswith("HR")
+                if len(streak) >= 2:
 
-        # New inning or new batting team
-        if (
-            inning != current_inning
-            or batting_team != current_team
-        ):
+                    results.append({
+                        "date": game_date,
+                        "team": team_abbr,
+                        "opponent": opponent,
+                        "inning": current_inning,
+                        "players": streak.copy()
+                    })
 
-            if len(streak) >= 2:
+                streak = []
 
-                print(
-                    f"Inning {current_inning} "
-                    f"Team {current_team}: "
-                    + ", ".join(streak)
-                )
+        if len(streak) >= 2:
 
-            streak = []
+            results.append({
+                "date": game_date,
+                "team": team_abbr,
+                "opponent": opponent,
+                "inning": current_inning,
+                "players": streak.copy()
+            })
 
-            current_inning = inning
-            current_team = batting_team
+print(f"\nFound {len(results)} streaks\n")
 
-        if is_hr:
-
-            streak.append(batter_name)
-
-        else:
-
-            if len(streak) >= 2:
-
-                print(
-                    f"Inning {current_inning} "
-                    f"Team {current_team}: "
-                    + ", ".join(streak)
-                )
-
-            streak = []
-
-# Catch streak at EOF
-if len(streak) >= 2:
+for row in results[:25]:
 
     print(
-        f"Inning {current_inning} "
-        f"Team {current_team}: "
-        + ", ".join(streak)
+        f"{row['date']} | "
+        f"{row['team']} vs {row['opponent']} | "
+        f"Inning {row['inning']} | "
+        f"{', '.join(row['players'])}"
     )
