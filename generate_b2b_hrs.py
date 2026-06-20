@@ -38,8 +38,14 @@ first_file = os.path.join(DATA_DIR, event_files[0])
 print(f"\nReading: {event_files[0]}\n")
 
 with open(first_file, encoding="latin-1") as f:
-    for i, line in enumerate(f):
-        print(line.strip())
+    play_count = 0
 
-        if i >= 50:
+    for line in f:
+        line = line.strip()
+
+        if line.startswith("play,"):
+            print(line)
+            play_count += 1
+
+        if play_count >= 20:
             break
