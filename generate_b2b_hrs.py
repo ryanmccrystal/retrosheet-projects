@@ -144,6 +144,11 @@ for event_file in event_files:
 
             if line.startswith("info,gametype,"):
                 gametype = line.split(",")[2]
+
+                # TEMPORARY DEBUG
+                if current_date and current_date.startswith("2000"):
+                    print("2000 gametype:", gametype)
+
                 continue
 
             # Player lookup
