@@ -3,32 +3,40 @@ import zipfile
 import requests
 
 DATA_DIR = "data"
-ZIP_FILE = os.path.join(DATA_DIR, "2025eve.zip")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# Download only if missing
-if not os.path.exists(ZIP_FILE):
-    print("Downloading Retrosheet 2025 event files...")
+event_files = []
 
-    url = "https://www.retrosheet.org/events/2025eve.zip"
-    r = requests.get(url)
-    r.raise_for_status()
+for year in range(2000, 2026):
 
-    with open(ZIP_FILE, "wb") as f:
-        f.write(r.content)
+    zip_file = os.path.join(DATA_DIR, f"{year}eve.zip")
+    year_dir = os.path.join(DATA_DIR, str(year))
 
-    print("Download complete.")
+    if not os.path.exists(zip_file):
 
-# Extract
-with zipfile.ZipFile(ZIP_FILE, "r") as z:
-    z.extractall(DATA_DIR)
+        print(f"Downloading {year}...")
 
-# Find event files
-event_files = sorted([
-    f for f in os.listdir(DATA_DIR)
-    if f.endswith(".EVA") or f.endswith(".EVN")
-])
+        url = f"https://www.retrosheet.org/events/{year}eve.zip"
+
+        r = requests.get(url)
+        r.raise_for_status()
+
+        with open(zip_file, "wb") as f:
+            f.write(r.content)
+
+    os.makedirs(year_dir, exist_ok=True)
+
+    with zipfile.ZipFile(zip_file, "r") as z:
+        z.extractall(year_dir)
+
+    for file in os.listdir(year_dir):
+
+        if file.endswith(".EVA") or file.endswith(".EVN"):
+
+            event_files.append(
+                os.path.join(year_dir, file)
+            )
 
 print(f"Found {len(event_files)} event files")
 
@@ -41,7 +49,7 @@ streak_counts = {}
 
 for event_file in event_files:
 
-    filepath = os.path.join(DATA_DIR, event_file)
+    filepath = event_file
 
     current_game_id = None
     current_date = None
