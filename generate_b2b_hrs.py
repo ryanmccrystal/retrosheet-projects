@@ -40,10 +40,15 @@ for year in range(2000, 2026):
 
 print(f"Found {len(event_files)} event files")
 
+print("\nChecking 2000 Cleveland file...\n")
+
 with open("data/2000/2000CLE.EVA", encoding="latin-1") as f:
-    for line in f:
-        if "gametype" in line:
-            print(line.strip())
+
+    for i, line in enumerate(f):
+
+        print(line.strip())
+
+        if i >= 50:
             break
 
 import csv
