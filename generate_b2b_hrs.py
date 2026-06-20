@@ -20,7 +20,10 @@ for year in range(1910, 1920):
         url = f"https://www.retrosheet.org/events/{year}eve.zip"
 
         r = requests.get(url)
-        r.raise_for_status()
+
+        if r.status_code != 200:
+            print(f"Skipping {year}")
+            continue
 
         with open(zip_file, "wb") as f:
             f.write(r.content)
@@ -226,6 +229,7 @@ for event_file in event_files:
 output_file = "cleveland_hr_streaks_2000_2025.csv"
 
 fieldnames = [
+    "year",
     "date",
     "game_id",
     "opponent",
@@ -267,3 +271,15 @@ if streak_counts:
         f"\nLongest streak: "
         f"{max(streak_counts)}"
     )
+
+from collections import Counter
+
+year_counts = Counter()
+
+for row in results:
+    year_counts[row["year"]] += 1
+
+print("\nStreaks by year:\n")
+
+for year in sorted(year_counts):
+    print(f"{year}: {year_counts[year]}")
