@@ -1,4 +1,4 @@
-import os
+    import os
 import zipfile
 import requests
 
@@ -70,11 +70,21 @@ for event_file in event_files:
         team_abbr = visteam if current_team == "0" else hometeam
         opponent = hometeam if current_team == "0" else visteam
 
+        # Cleveland only
+        if team_abbr != "CLE":
+            return
+
+        home_away = (
+            "Away"
+            if current_team == "0"
+            else "Home"
+        )
+
         row = {
             "date": current_date,
             "game_id": current_game_id,
-            "team": team_abbr,
             "opponent": opponent,
+            "home_away": home_away,
             "inning": current_inning,
             "count": len(streak),
             "player_1": "",
