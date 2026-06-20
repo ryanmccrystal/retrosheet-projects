@@ -37,15 +37,33 @@ first_file = os.path.join(DATA_DIR, event_files[0])
 
 print(f"\nReading: {event_files[0]}\n")
 
+# Open first file and list all HRs
+
 with open(first_file, encoding="latin-1") as f:
-    play_count = 0
+
+    hr_count = 0
 
     for line in f:
+
         line = line.strip()
 
-        if line.startswith("play,"):
-            print(line)
-            play_count += 1
+        if not line.startswith("play,"):
+            continue
 
-        if play_count >= 20:
-            break
+        fields = line.split(",")
+
+        inning = fields[1]
+        team = fields[2]
+        batter = fields[3]
+        event = fields[6]
+
+        if event.startswith("HR"):
+
+            print(
+                f"Inning {inning} | Team {team} | Batter {batter} | {event}"
+            )
+
+            hr_count += 1
+
+            if hr_count >= 20:
+                break
