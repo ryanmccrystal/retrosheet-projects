@@ -51,6 +51,9 @@ for event_file in event_files:
 
     filepath = event_file
 
+    if "2010CLE.EVA" not in filepath:
+        continue
+
     current_game_id = None
     current_date = None
     visteam = None
@@ -108,6 +111,9 @@ for event_file in event_files:
         for raw_line in f:
 
             line = raw_line.strip()
+
+            if current_date == "2010/08/15":
+                print(line)
 
             # New game
             if line.startswith("id,"):
