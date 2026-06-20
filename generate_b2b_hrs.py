@@ -207,6 +207,10 @@ for event_file in event_files:
                 current_inning = inning
                 current_team = batting_team
 
+            # No Play does not end a streak
+            if event == "NP":
+                continue
+
             if event.startswith("HR"):
 
                 streak.append(batter_name)
