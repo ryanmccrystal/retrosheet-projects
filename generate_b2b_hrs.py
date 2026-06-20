@@ -7,29 +7,39 @@ ZIP_FILE = os.path.join(DATA_DIR, "2025eve.zip")
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
-url = "https://www.retrosheet.org/events/2025eve.zip"
+# Download only if missing
+if not os.path.exists(ZIP_FILE):
+    print("Downloading Retrosheet 2025 event files...")
 
-print("Downloading Retrosheet 2025 event files...")
+    url = "https://www.retrosheet.org/events/2025eve.zip"
+    r = requests.get(url)
+    r.raise_for_status()
 
-r = requests.get(url)
-r.raise_for_status()
+    with open(ZIP_FILE, "wb") as f:
+        f.write(r.content)
 
-with open(ZIP_FILE, "wb") as f:
-    f.write(r.content)
+    print("Download complete.")
 
-print("Extracting files...")
-
+# Extract
 with zipfile.ZipFile(ZIP_FILE, "r") as z:
     z.extractall(DATA_DIR)
 
-print("Done.")
-
-event_files = [
+# Find event files
+event_files = sorted([
     f for f in os.listdir(DATA_DIR)
-    if f.endswith(".EVN") or f.endswith(".EVA")
-]
+    if f.endswith(".EVA") or f.endswith(".EVN")
+])
 
-print(f"\nFound {len(event_files)} event files:\n")
+print(f"Found {len(event_files)} event files")
 
-for f in sorted(event_files)[:10]:
-    print(f)
+# Open first file
+first_file = os.path.join(DATA_DIR, event_files[0])
+
+print(f"\nReading: {event_files[0]}\n")
+
+with open(first_file, encoding="latin-1") as f:
+    for i, line in enumerate(f):
+        print(line.strip())
+
+        if i >= 50:
+            break
