@@ -8,7 +8,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 event_files = []
 
-for year in range(1901, 1910):
+for year in range(1910, 1920):
 
     zip_file = os.path.join(DATA_DIR, f"{year}eve.zip")
     year_dir = os.path.join(DATA_DIR, str(year))
