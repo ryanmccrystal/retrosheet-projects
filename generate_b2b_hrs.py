@@ -273,3 +273,36 @@ print("\nStreaks by year:\n")
 
 for year in sorted(year_counts):
     print(f"{year}: {year_counts[year]}")
+
+from collections import Counter
+
+pair_counts = Counter()
+
+for row in results:
+
+    players = []
+
+    for key, value in row.items():
+
+        if key.startswith("player_") and value:
+            players.append(value)
+
+    # Count consecutive pairs only
+    for i in range(len(players) - 1):
+
+        pair = tuple(
+            sorted([
+                players[i],
+                players[i + 1]
+            ])
+        )
+
+        pair_counts[pair] += 1
+
+print("\nTop Cleveland HR Pairs:\n")
+
+for pair, count in pair_counts.most_common(50):
+
+    print(
+        f"{pair[0]} / {pair[1]} - {count}"
+    )
