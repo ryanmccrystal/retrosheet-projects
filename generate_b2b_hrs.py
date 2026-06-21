@@ -306,3 +306,28 @@ for pair, count in pair_counts.most_common(50):
     print(
         f"{pair[0]} / {pair[1]} - {count}"
     )
+
+from collections import defaultdict
+
+partner_counts = defaultdict(set)
+
+for pair in pair_counts:
+
+    player1, player2 = pair
+
+    partner_counts[player1].add(player2)
+    partner_counts[player2].add(player1)
+
+print("\nMost Unique HR Partners:\n")
+
+leaders = sorted(
+    partner_counts.items(),
+    key=lambda x: len(x[1]),
+    reverse=True
+)
+
+for player, partners in leaders[:50]:
+
+    print(
+        f"{player} - {len(partners)}"
+    )
