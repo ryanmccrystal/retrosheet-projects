@@ -147,7 +147,7 @@ for event_file in event_files:
             # Player lookup
             if line.startswith("start,"):
 
-                if "thorna001" in line:
+                if "thora001" in line:
                     print(line)
 
                 fields = line.split(",")
@@ -160,7 +160,7 @@ for event_file in event_files:
 
             if line.startswith("sub,"):
 
-                if "thorna001" in line:
+                if "thora001" in line:
                     print(line)
 
                 fields = line.split(",")
