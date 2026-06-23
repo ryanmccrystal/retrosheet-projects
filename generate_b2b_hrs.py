@@ -8,7 +8,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 event_files = []
 
-for year in range(1910, 2026):
+for year in range(1962, 2026):
 
     zip_file = os.path.join(DATA_DIR, f"{year}eve.zip")
     year_dir = os.path.join(DATA_DIR, str(year))
@@ -74,7 +74,7 @@ for event_file in event_files:
         opponent = hometeam if current_team == "0" else visteam
 
         # Cleveland only
-        if team_abbr != "CLE":
+        if team_abbr != "NYN":
             return
 
         home_away = (
@@ -218,7 +218,7 @@ max_streak = max(
 
 # Write CSV
 
-output_file = "cleveland_hr_streaks_1910_2025.csv"
+output_file = "mets_hr_streaks_1962_2025.csv"
 
 fieldnames = [
     "year",
