@@ -71,12 +71,19 @@ print("\nLoading Chadwick Register...\n")
 
 register = load_chadwick_register()
 
-print(
-    register.loc[
-        register["key_retro"] == "strad001",
-        ["name_first", "name_last"]
-    ]
-)
+canonical_name = {}
+
+for _, row in register.iterrows():
+
+    retro_id = row["key_retro"]
+
+    if pd.isna(retro_id):
+        continue
+
+    canonical_name[retro_id] = (
+        f"{row['name_first']} "
+        f"{row['name_last']}"
+    )
 
 import csv
 
@@ -132,8 +139,14 @@ for event_file in event_files:
             "streak": len(streak)
         }
 
-        for i, player in enumerate(streak):
-            row[f"player_{i+1}"] = player
+        for i, player_id in enumerate(streak):
+
+            row[f"player_{i+1}"] = (
+                canonical_name.get(
+                    player_id,
+                    player_id
+                )
+            )
 
         results.append(row)
 
