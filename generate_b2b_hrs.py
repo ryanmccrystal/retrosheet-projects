@@ -207,13 +207,6 @@ for event_file in event_files:
                     fields[2].replace('"', '')
                 )
 
-                if "Strawberry" in player_name:
-                    print(
-                        f"START | {filepath} | "
-                        f"{player_id} | "
-                        f"{player_name}"
-                    )
-
                 player_lookup[player_id] = player_name
 
                 player_names[player_id].add(player_name)
@@ -229,13 +222,6 @@ for event_file in event_files:
                 player_name = (
                     fields[2].replace('"', '')
                 )
-
-                if "Strawberry" in player_name:
-                    print(
-                        f"SUB   | {filepath} | "
-                        f"{player_id} | "
-                        f"{player_name}"
-                    )
 
                 player_lookup[player_id] = player_name
 
