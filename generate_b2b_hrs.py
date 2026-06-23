@@ -45,6 +45,10 @@ print(f"Found {len(event_files)} event files")
 
 import csv
 
+from collections import defaultdict
+
+player_names = defaultdict(set)
+
 results = []
 
 # Summary counters
@@ -147,27 +151,33 @@ for event_file in event_files:
             # Player lookup
             if line.startswith("start,"):
 
-                if "thora001" in line:
-                    print(line)
-
                 fields = line.split(",")
 
-                player_lookup[fields[1]] = (
+                player_id = fields[1]
+
+                player_name = (
                     fields[2].replace('"', '')
                 )
+
+                player_lookup[player_id] = player_name
+
+                player_names[player_id].add(player_name)
 
                 continue
 
             if line.startswith("sub,"):
 
-                if "thora001" in line:
-                    print(line)
-
                 fields = line.split(",")
 
-                player_lookup[fields[1]] = (
+                player_id = fields[1]
+
+                player_name = (
                     fields[2].replace('"', '')
                 )
+
+                player_lookup[player_id] = player_name
+
+                player_names[player_id].add(player_name)
 
                 continue
 
@@ -337,3 +347,14 @@ for player, partners in leaders[:50]:
     print(
         f"{player} - {len(partners)}"
     )
+
+print("\nPlayers with multiple names:\n")
+
+for player_id, names in sorted(player_names.items()):
+
+    if len(names) > 1:
+
+        print(
+            f"{player_id} -> "
+            f"{sorted(names)}"
+        )
