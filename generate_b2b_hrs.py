@@ -169,7 +169,7 @@ for event_file in event_files:
                     fields[2].replace('"', '')
                 )
 
-    continue
+            continue
 
             # Play records
             if not line.startswith("play,"):
