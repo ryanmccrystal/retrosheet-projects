@@ -159,14 +159,14 @@ for event_file in event_files:
                     fields[2].replace('"', '')
                 )
 
-                # Keep the longest version of the name
-                existing = player_lookup.get(player_id)
+                if "Strawberry" in player_name:
+                    print(
+                        f"START | {filepath} | "
+                        f"{player_id} | "
+                        f"{player_name}"
+                    )
 
-                if (
-                    existing is None
-                    or len(player_name) > len(existing)
-                ):
-                    player_lookup[player_id] = player_name
+                player_lookup[player_id] = player_name
 
                 player_names[player_id].add(player_name)
 
@@ -182,14 +182,14 @@ for event_file in event_files:
                     fields[2].replace('"', '')
                 )
 
-                # Keep the longest version of the name
-                existing = player_lookup.get(player_id)
+                if "Strawberry" in player_name:
+                    print(
+                        f"SUB   | {filepath} | "
+                        f"{player_id} | "
+                        f"{player_name}"
+                    )
 
-                if (
-                    existing is None
-                    or len(player_name) > len(existing)
-                ):
-                    player_lookup[player_id] = player_name
+                player_lookup[player_id] = player_name
 
                 player_names[player_id].add(player_name)
 
