@@ -147,6 +147,9 @@ for event_file in event_files:
             # Player lookup
             if line.startswith("start,"):
 
+                if "thorna001" in line:
+                    print(line)
+
                 fields = line.split(",")
 
                 player_lookup[fields[1]] = (
@@ -157,13 +160,16 @@ for event_file in event_files:
 
             if line.startswith("sub,"):
 
+                if "thorna001" in line:
+                    print(line)
+
                 fields = line.split(",")
 
                 player_lookup[fields[1]] = (
                     fields[2].replace('"', '')
                 )
 
-                continue
+    continue
 
             # Play records
             if not line.startswith("play,"):
