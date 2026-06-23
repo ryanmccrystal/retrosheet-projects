@@ -1,6 +1,30 @@
 import os
 import zipfile
 import requests
+import pandas as pd
+
+def load_chadwick_register():
+
+    dfs = []
+
+    for letter in "0123456789abcdef":
+
+        url = (
+            "https://raw.githubusercontent.com/"
+            "chadwickbureau/register/master/"
+            f"data/people-{letter}.csv"
+        )
+
+        print(f"Loading people-{letter}.csv")
+
+        dfs.append(
+            pd.read_csv(url, low_memory=False)
+        )
+
+    return pd.concat(
+        dfs,
+        ignore_index=True
+    )
 
 DATA_DIR = "data"
 
@@ -42,6 +66,17 @@ for year in range(1910, 2026):
             )
 
 print(f"Found {len(event_files)} event files")
+
+print("\nLoading Chadwick Register...\n")
+
+register = load_chadwick_register()
+
+print(
+    register.loc[
+        register["key_retro"] == "strad001",
+        ["name_first", "name_last"]
+    ]
+)
 
 import csv
 
@@ -230,7 +265,7 @@ for event_file in event_files:
 
             if event.startswith("HR"):
 
-                streak.append(batter_name)
+                streak.append(batter_id)
 
             else:
 
