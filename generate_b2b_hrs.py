@@ -396,13 +396,3 @@ for player, partners in leaders[:50]:
         f"{player} - {len(partners)}"
     )
 
-print("\nPlayers with multiple names:\n")
-
-for player_id, names in sorted(player_names.items()):
-
-    if len(names) > 1:
-
-        print(
-            f"{player_id} -> "
-            f"{sorted(names)}"
-        )
