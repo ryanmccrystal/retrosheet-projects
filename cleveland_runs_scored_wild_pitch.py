@@ -8,8 +8,8 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 event_files = []
 
-# Download 2016-2025 Retrosheet event files
-for year in range(2017, 2026):
+# Download 2000-2025 Retrosheet event files
+for year in range(2000, 2026):
 
     zip_file = os.path.join(DATA_DIR, f"{year}eve.zip")
     year_dir = os.path.join(DATA_DIR, str(year))
