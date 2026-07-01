@@ -159,6 +159,9 @@ for event_file in event_files:
             if "WP" not in event:
                 continue
 
+            if "-H" not in event:
+                continue
+
             wild_pitch_events.append({
                 "date": current_date,
                 "game_id": current_game_id,
