@@ -1,74 +1,24 @@
 import os
 import zipfile
 import requests
-import pandas as pd
-
-def load_chadwick_register():
-
-    dfs = []
-
-    for letter in "0123456789abcdef":
-
-        url = (
-            "https://raw.githubusercontent.com/"
-            "chadwickbureau/register/master/"
-            f"data/people-{letter}.csv"
-        )
-
-        print(f"Loading people-{letter}.csv")
-
-        dfs.append(
-            pd.read_csv(url, low_memory=False)
-        )
-
-    return pd.concat(
-        dfs,
-        ignore_index=True
-    )
-
-print("\nLoading Chadwick Register...\n")
-
-register = load_chadwick_register()
-
-canonical_name = {}
-
-for _, row in register.iterrows():
-
-    retro_id = row["key_retro"]
-
-    if pd.isna(retro_id):
-        continue
-
-    canonical_name[retro_id] = (
-        f"{row['name_first']} "
-        f"{row['name_last']}"
-    )
+from collections import defaultdict
 
 DATA_DIR = "data"
-
 os.makedirs(DATA_DIR, exist_ok=True)
 
 event_files = []
 
+# Download 2021-2025 Retrosheet event files
 for year in range(2021, 2026):
 
-    zip_file = os.path.join(
-        DATA_DIR,
-        f"{year}eve.zip"
-    )
-
-    year_dir = os.path.join(
-        DATA_DIR,
-        str(year)
-    )
+    zip_file = os.path.join(DATA_DIR, f"{year}eve.zip")
+    year_dir = os.path.join(DATA_DIR, str(year))
 
     if not os.path.exists(zip_file):
 
         print(f"Downloading {year}...")
 
-        url = (
-            f"https://www.retrosheet.org/events/{year}eve.zip"
-        )
+        url = f"https://www.retrosheet.org/events/{year}eve.zip"
 
         r = requests.get(url)
 
@@ -86,27 +36,19 @@ for year in range(2021, 2026):
 
     for file in os.listdir(year_dir):
 
-        if (
-            file.endswith(".EVA")
-            or file.endswith(".EVN")
-        ):
+        if file.endswith(".EVA") or file.endswith(".EVN"):
 
             event_files.append(
-                os.path.join(
-                    year_dir,
-                    file
-                )
+                os.path.join(year_dir, file)
             )
 
-print(
-    f"\nFound {len(event_files)} event files\n"
-)
+print(f"Found {len(event_files)} event files\n")
 
-wild_pitch_events = []
+games = {}
 
 for event_file in event_files:
 
-    current_game_id = None
+    current_game = None
     current_date = None
     visteam = None
     hometeam = None
@@ -119,12 +61,22 @@ for event_file in event_files:
 
             if line.startswith("id,"):
 
-                current_game_id = line.split(",")[1]
+                current_game = line.split(",")[1]
+
+                games[current_game] = {
+                    "date": "",
+                    "opponent": "",
+                    "home_away": "",
+                    "wp_runs": 0,
+                    "plays": []
+                }
+
                 continue
 
             if line.startswith("info,date,"):
 
                 current_date = line.split(",")[2]
+                games[current_game]["date"] = current_date
                 continue
 
             if line.startswith("info,visteam,"):
@@ -135,6 +87,15 @@ for event_file in event_files:
             if line.startswith("info,hometeam,"):
 
                 hometeam = line.split(",")[2]
+
+                # Determine if Cleveland is home or away
+                if hometeam == "CLE":
+                    games[current_game]["home_away"] = "Home"
+                    games[current_game]["opponent"] = visteam
+                elif visteam == "CLE":
+                    games[current_game]["home_away"] = "Away"
+                    games[current_game]["opponent"] = hometeam
+
                 continue
 
             if not line.startswith("play,"):
@@ -147,42 +108,52 @@ for event_file in event_files:
             batter_id = fields[3]
             event = fields[6]
 
-            team_abbr = (
-                visteam
-                if batting_team == "0"
-                else hometeam
-            )
+            team_abbr = visteam if batting_team == "0" else hometeam
 
+            # Only Cleveland batting
             if team_abbr != "CLE":
                 continue
 
+            # Must be a wild pitch that scores at least one run
             if "WP" not in event:
                 continue
 
             if "-H" not in event:
                 continue
 
-            wild_pitch_events.append({
-                "date": current_date,
-                "game_id": current_game_id,
+            runs = event.count("-H")
+
+            games[current_game]["wp_runs"] += runs
+
+            games[current_game]["plays"].append({
                 "inning": inning,
-                "batter": canonical_name.get(
-                    batter_id,
-                    batter_id
-                ),
-                "event": event
+                "event": event,
+                "runs": runs
             })
 
-print(
-    f"\nFound {len(wild_pitch_events)} Cleveland batting plays containing WP.\n"
-)
+print("\nGames with 2+ Wild Pitch Runs\n")
 
-for play in wild_pitch_events:
+for game in sorted(
+    games.values(),
+    key=lambda x: x["date"]
+):
+
+    if game["wp_runs"] < 2:
+        continue
 
     print(
-        f"{play['date']} | "
-        f"{play['game_id']} | "
-        f"Inning {play['inning']} | "
-        f"{play['batter']} | "
-        f"{play['event']}"
+        f"{game['date']} | "
+        f"{game['opponent']} | "
+        f"{game['home_away']} | "
+        f"{game['wp_runs']} runs"
     )
+
+    for play in game["plays"]:
+
+        print(
+            f"   Inning {play['inning']} | "
+            f"{play['runs']} run(s) | "
+            f"{play['event']}"
+        )
+
+    print()
