@@ -1,0 +1,39 @@
+name: Cleveland HR Triple Pairs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run HR/Triple script
+        run: |
+          python cleveland_hr_triple_pairs.py
+
+      - name: Upload CSV
+        uses: actions/upload-artifact@v4
+        with:
+          name: cleveland-hr-triple-pairs
+          path: cleveland_hr_triple_pairs_1962_2025.csv
+
+      - name: Show output files
+        run: |
+          ls -lah
