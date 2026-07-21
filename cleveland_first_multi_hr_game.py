@@ -299,7 +299,7 @@ for hr in all_home_runs:
                     hr["player"],
 
                 "career_hr_before":
-                    career_before,
+                    career_before - 1,
 
                 "date":
                     hr["date"],
