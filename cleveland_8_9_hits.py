@@ -323,16 +323,21 @@ for event_file in event_files:
                 
                 # Count hits by the starting
                 # #8 and #9 hitters only.
-                if event.startswith(("S", "D", "T", "HR")):
+                for slot in (8, 9):
+
+                    if (
+                        slot in starters
+                        and batter_id == starters[slot]["id"]
+                    ):
                 
-                    for slot in (8, 9):
+                        print(
+                            current_date,
+                            starters[slot]["name"],
+                            batter_id,
+                            event
+                        )
                 
-                        if (
-                            slot in starters
-                            and batter_id
-                            == starters[slot]["id"]
-                        ):
-                
+                        if event.startswith(("S", "D", "T", "HR")):
                             hits[batter_id] += 1
     
         # --------------------------------------------------
