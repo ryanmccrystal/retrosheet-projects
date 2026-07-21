@@ -93,6 +93,7 @@ for event_file in sorted(event_files):
     game_date = None
     visteam = None
     hometeam = None
+    starters = {}
 
     with open(
         event_file,
@@ -135,14 +136,24 @@ for event_file in sorted(event_files):
                         f"{home_away}  "
                         f"vs {opponent}"
                     )
+                    
+                    if 8 in starters:
+                        print(f"   8: {starters[8]['name']}")
+                    
+                    if 9 in starters:
+                        print(f"   9: {starters[9]['name']}")
+                    
+                    print()
 
                 # Start new game
                 game_id = line.split(",")[1]
-
+                
                 game_date = None
                 visteam = None
                 hometeam = None
-
+                
+                starters = {}
+                
                 continue
 
             if line.startswith("info,date,"):
@@ -161,6 +172,35 @@ for event_file in sorted(event_files):
 
                 hometeam = line.split(",")[2]
 
+                continue
+
+            # --------------------------
+            # Starting Lineups
+            # --------------------------
+            
+            if line.startswith("start,"):
+            
+                fields = line.split(",")
+            
+                player_id = fields[1]
+                player_name = fields[2].strip('"')
+                team = fields[3]
+                batting_order = int(fields[4])
+            
+                # Keep only Cleveland starters
+                if (
+                    (visteam == TEAM and team == "0")
+                    or
+                    (hometeam == TEAM and team == "1")
+                ):
+            
+                    if batting_order in (8, 9):
+            
+                        starters[batting_order] = {
+                            "id": player_id,
+                            "name": player_name
+                        }
+            
                 continue
 
     # Print final game in file
@@ -193,6 +233,14 @@ for event_file in sorted(event_files):
             f"{home_away}  "
             f"vs {opponent}"
         )
+        
+        if 8 in starters:
+            print(f"   8: {starters[8]['name']}")
+        
+        if 9 in starters:
+            print(f"   9: {starters[9]['name']}")
+        
+        print()
 
 print(
     f"\nFound {game_count} Cleveland games."
