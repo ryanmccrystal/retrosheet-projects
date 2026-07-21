@@ -275,25 +275,34 @@ for event_file in event_files:
             if line.startswith("start,"):
 
                 fields = line.split(",")
-
+            
                 player_id = fields[1]
-
+            
+                team = fields[3]
+            
                 batting_order = int(fields[4])
-
-                if batting_order in (8, 9):
-
-                    starters[batting_order] = {
-
-                        "id":
-                            player_id,
-
-                        "name":
-                            canonical_name.get(
+            
+                # Only keep Cleveland starters
+                if (
+                    (visteam == TEAM and team == "0")
+                    or
+                    (hometeam == TEAM and team == "1")
+                ):
+            
+                    if batting_order in (8, 9):
+            
+                        starters[batting_order] = {
+            
+                            "id":
                                 player_id,
-                                player_id
-                            )
-                    }
-
+            
+                            "name":
+                                canonical_name.get(
+                                    player_id,
+                                    player_id
+                                )
+                        }
+            
                 continue
 
                 # --------------------------
