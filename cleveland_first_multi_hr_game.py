@@ -144,10 +144,10 @@ all_home_runs = []
 
 for event_file in event_files:
 
-if not event_file.endswith("1946CLE.EVA"):
-    continue
+    if not event_file.endswith("1946CLE.EVA"):
+        continue
 
-print(f"\nReading {event_file}\n")
+    print(f"\nReading {event_file}\n")
 
     current_game_id = None
     current_date = None
@@ -159,14 +159,14 @@ print(f"\nReading {event_file}\n")
         encoding="latin-1"
     ) as f:
 
-            for i, raw_line in enumerate(f):
-    
-                if i >= 30:
-                    break
-    
-                print(raw_line.rstrip())
-    
-            break
+        for i, raw_line in enumerate(f):
+
+            if i >= 30:
+                break
+
+            print(raw_line.rstrip())
+
+    break
 
         for raw_line in f:
 
