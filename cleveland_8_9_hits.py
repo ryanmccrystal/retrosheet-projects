@@ -306,39 +306,16 @@ for event_file in event_files:
                 continue
 
                 # --------------------------
-                # Play Records
+                # Play Records (DEBUG)
                 # --------------------------
                 
                 if not line.startswith("play,"):
                     continue
                 
-                fields = line.split(",")
-                
-                batter_id = fields[3]
-                event = fields[6]
-
                 if current_game == "CLE200004140":
-                    if batter_id in ("frymt001", "aloms001"):
-                        print(current_game, batter_id, event)
+                    print(line)
                 
-                # Count hits by the starting
-                # #8 and #9 hitters only.
-                for slot in (8, 9):
-
-                    if (
-                        slot in starters
-                        and batter_id == starters[slot]["id"]
-                    ):
-                
-                        print(
-                            current_date,
-                            starters[slot]["name"],
-                            batter_id,
-                            event
-                        )
-                
-                        if event.startswith(("S", "D", "T", "HR")):
-                            hits[batter_id] += 1
+                continue
     
         # --------------------------------------------------
         # Save final game in file
