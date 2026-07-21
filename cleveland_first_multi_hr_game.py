@@ -158,6 +158,9 @@ for event_file in event_files:
 
             line = raw_line.strip()
 
+            if line.startswith("id,CLE194609200"):
+                print("FOUND GAME")
+
             if line.startswith("id,"):
 
                 current_game_id = (
