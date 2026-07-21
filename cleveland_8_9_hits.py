@@ -184,7 +184,7 @@ for event_file in event_files:
                             hits[starters[9]["id"]]
                         )
 
-                        if total >= 8:
+                        if total >= 7:
 
                             opponent = (
                                 visteam
