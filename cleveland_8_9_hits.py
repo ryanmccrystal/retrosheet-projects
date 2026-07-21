@@ -8,8 +8,8 @@ import requests
 
 TEAM = "CLE"
 
-START_YEAR = 2000
-END_YEAR = 2000
+START_YEAR = 1994
+END_YEAR = 2025
 
 DATA_DIR = "data"
 
