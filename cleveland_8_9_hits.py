@@ -97,6 +97,7 @@ for event_file in sorted(event_files):
     hometeam = None
     starters = {}
     hits = {}
+    home_runs = {}
 
     with open(
         event_file,
@@ -141,8 +142,12 @@ for event_file in sorted(event_files):
                     )
                     
                     combined_hits = sum(hits.values())
+                    combined_home_runs = sum(home_runs.values())
 
-                    if combined_hits >= 7:
+                    if (
+                        combined_hits >= 7
+                        and combined_home_runs >= 3
+                    ):
 
                         players = sorted(
                             starters.items(),
@@ -171,6 +176,12 @@ for event_file in sorted(event_files):
                             "hits_9": hits.get(p9_id, 0),
                     
                             "combined_hits": combined_hits
+
+                            "home_runs_8": home_runs.get(p8_id, 0),
+
+                            "home_runs_9": home_runs.get(p9_id, 0),
+                            
+                            "combined_home_runs": combined_home_runs,
                     
                         })
 
@@ -183,6 +194,7 @@ for event_file in sorted(event_files):
                 
                 starters = {}
                 hits = {}
+                home_runs = {}
                 
                 continue
 
@@ -249,10 +261,17 @@ for event_file in sorted(event_files):
             event = fields[6]
             
             if batter_id in starters:
-            
+
                 if event.startswith(("S", "D", "T", "HR")):
             
                     hits[batter_id] = hits.get(
+                        batter_id,
+                        0
+                    ) + 1
+            
+                if event.startswith("HR"):
+            
+                    home_runs[batter_id] = home_runs.get(
                         batter_id,
                         0
                     ) + 1
@@ -291,8 +310,12 @@ for event_file in sorted(event_files):
         )
         
         combined_hits = sum(hits.values())
+        combined_home_runs = sum(home_runs.values())
 
-        if combined_hits >= 7:
+        if (
+            combined_hits >= 7
+            and combined_home_runs >= 3
+        ):
 
             players = sorted(
                 starters.items(),
@@ -321,16 +344,23 @@ for event_file in sorted(event_files):
                 "hits_9": hits.get(p9_id, 0),
         
                 "combined_hits": combined_hits
+
+                "home_runs_8": home_runs.get(p8_id, 0),
+
+                "home_runs_9": home_runs.get(p9_id, 0),
+                
+                "combined_home_runs": combined_home_runs,
         
             })
 
 print(f"\nFound {len(results)} qualifying games.\n")
 
-for row in results:
-
-    print(
-        f"{row['date']}  "
-        f"{row['player_8']} ({row['hits_8']})  "
-        f"{row['player_9']} ({row['hits_9']})  "
-        f"= {row['combined_hits']}"
-    )
+print(
+    f"{row['date']}  "
+    f"{row['player_8']} "
+    f"{row['hits_8']} H, {row['home_runs_8']} HR | "
+    f"{row['player_9']} "
+    f"{row['hits_9']} H, {row['home_runs_9']} HR | "
+    f"Totals: {row['combined_hits']} H, "
+    f"{row['combined_home_runs']} HR"
+)
