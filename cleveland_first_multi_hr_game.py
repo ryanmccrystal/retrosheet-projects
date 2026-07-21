@@ -12,8 +12,8 @@ from collections import defaultdict
 
 TEAM = "CLE"
 
-START_YEAR = 1910
-END_YEAR = 2025
+START_YEAR = 1946
+END_YEAR = 1946
 
 OUTPUT_FILE = "cleveland_first_multi_hr_game.csv"
 
@@ -216,6 +216,9 @@ for event_file in event_files:
             batter_id = fields[3]
             event = fields[6]
 
+            if batter_id != "robie101":
+                continue
+
             if not event.startswith("HR"):
                 continue
 
@@ -236,6 +239,14 @@ for event_file in event_files:
                 if batting_team == "0"
                 else "Home"
             )
+
+            if batter_id == "robie101":
+                print(
+                    current_date,
+                    current_game_id,
+                    career_hr[batter_id],
+                    event
+                )
 
             # Count ALL career HR
             career_hr[batter_id] += 1
