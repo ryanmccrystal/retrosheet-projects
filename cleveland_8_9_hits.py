@@ -12,8 +12,8 @@ from collections import defaultdict
 
 TEAM = "CLE"
 
-START_YEAR = 1994
-END_YEAR = 2025
+START_YEAR = 2000
+END_YEAR = 2000
 
 OUTPUT_FILE = "cleveland_8_9_hits.csv"
 
@@ -316,6 +316,9 @@ for event_file in event_files:
     
                 batter_id = fields[3]
                 event = fields[6]
+
+                if batter_id == starters.get(8, {}).get("id") or batter_id == starters.get(9, {}).get("id"):
+                    print(batter_id, event)
     
                 # Count hits by the starting
                 # #8 and #9 hitters only.
