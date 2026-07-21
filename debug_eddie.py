@@ -23,9 +23,7 @@ os.makedirs(year_dir, exist_ok=True)
 with zipfile.ZipFile(zip_file, "r") as z:
     z.extractall(year_dir)
 
-print("Searching event files...\n")
-
-found = False
+print("1946 Cleveland home games:\n")
 
 for filename in sorted(os.listdir(year_dir)):
 
@@ -34,9 +32,12 @@ for filename in sorted(os.listdir(year_dir)):
 
     path = os.path.join(year_dir, filename)
 
-    with open(path, encoding="latin-1") as f:
+    current_game = None
+    current_date = None
+    hometeam = None
+    visteam = None
 
-        current_game = None
+    with open(path, encoding="latin-1") as f:
 
         for line in f:
 
@@ -45,10 +46,29 @@ for filename in sorted(os.listdir(year_dir)):
             if line.startswith("id,"):
                 current_game = line[3:]
 
-            if current_game == "CLE194609200":
-                found = True
-                print(f"\n===== {filename} =====")
-                print(line)
+                current_date = None
+                hometeam = None
+                visteam = None
 
-if not found:
-    print("Game CLE194609200 was NOT found in any 1946 event file.")
+            elif line.startswith("info,date,"):
+                current_date = line.split(",")[2]
+
+            elif line.startswith("info,hometeam,"):
+                hometeam = line.split(",")[2]
+
+            elif line.startswith("info,visteam,"):
+                visteam = line.split(",")[2]
+
+            elif line.startswith("play,"):
+
+                if hometeam == "CLE":
+
+                    print(
+                        current_game,
+                        current_date,
+                        visteam,
+                        "at",
+                        hometeam
+                    )
+
+                    break
