@@ -51,7 +51,6 @@ def load_chadwick_register():
         ignore_index=True
     )
 
-
 print("\nLoading Chadwick Register...\n")
 
 register = load_chadwick_register()
@@ -60,18 +59,16 @@ canonical_name = {}
 
 for _, row in register.iterrows():
 
-    retro_id = row["key_retro"]
-
-    if pd.isna(retro_id):
+    if pd.isna(row["key_retro"]):
         continue
 
-    canonical_name[retro_id] = (
+    canonical_name[row["key_retro"]] = (
         f"{row['name_first']} "
         f"{row['name_last']}"
     )
 
 # --------------------------------------------------
-# Download Retrosheet Files
+# Download Event Files
 # --------------------------------------------------
 
 event_files = []
@@ -96,18 +93,16 @@ for year in range(
         print(f"Downloading {year}...")
 
         url = (
-            f"https://www.retrosheet.org/events/{year}eve.zip"
+            f"https://www.retrosheet.org/"
+            f"events/{year}eve.zip"
         )
 
         r = requests.get(url)
 
         if r.status_code != 200:
-
-            print(f"Skipping {year}")
             continue
 
         with open(zip_file, "wb") as f:
-
             f.write(r.content)
 
     os.makedirs(
@@ -120,9 +115,7 @@ for year in range(
         "r"
     ) as z:
 
-        z.extractall(
-            year_dir
-        )
+        z.extractall(year_dir)
 
     for file in os.listdir(year_dir):
 
@@ -143,12 +136,11 @@ print(
 )
 
 # --------------------------------------------------
-# Track Career HRs
+# PASS 1
+# Collect every MLB HR
 # --------------------------------------------------
 
-career_hr = defaultdict(int)
-
-first_multi_hr = {}
+all_home_runs = []
 
 for event_file in event_files:
 
@@ -157,55 +149,46 @@ for event_file in event_files:
     visteam = None
     hometeam = None
 
-    game_hr = defaultdict(int)
-
     with open(
         event_file,
         encoding="latin-1"
     ) as f:
-    
+
         for raw_line in f:
 
             line = raw_line.strip()
 
-            # --------------------------
-            # New Game
-            # --------------------------
-
             if line.startswith("id,"):
 
-                current_game_id = line.split(",")[1]
-
-                current_date = None
-                visteam = None
-                hometeam = None
-
-                game_hr.clear()
+                current_game_id = (
+                    line.split(",")[1]
+                )
 
                 continue
 
-            # --------------------------
-            # Game Info
-            # --------------------------
-
             if line.startswith("info,date,"):
 
-                current_date = line.split(",")[2]
+                current_date = (
+                    line.split(",")[2]
+                )
+
                 continue
 
             if line.startswith("info,visteam,"):
 
-                visteam = line.split(",")[2]
+                visteam = (
+                    line.split(",")[2]
+                )
+
                 continue
 
             if line.startswith("info,hometeam,"):
 
-                hometeam = line.split(",")[2]
-                continue
+                hometeam = (
+                    line.split(",")[2]
+                )
 
-            # --------------------------
-            # Plays
-            # --------------------------
+                continue
 
             if not line.startswith("play,"):
                 continue
@@ -237,67 +220,120 @@ for event_file in event_files:
                 else "Home"
             )
 
-            # Count ALL career HR
-            career_hr[batter_id] += 1
+            all_home_runs.append({
 
-            # Count HR in THIS game
-            game_hr[batter_id] += 1
+                "date":
+                    current_date,
 
-            # First time reaching 2 HR in any game
-            if (
-                game_hr[batter_id] == 2
-                and batter_id not in first_multi_hr
-            ):
+                "game_id":
+                    current_game_id,
 
-                # Only SAVE if it happened with Cleveland
-                if team_abbr == TEAM:
+                "batter":
+                    batter_id,
 
-                    first_multi_hr[batter_id] = {
+                "player":
+                    canonical_name.get(
+                        batter_id,
+                        batter_id
+                    ),
 
-                        "player":
-                            canonical_name.get(
-                                batter_id,
-                                batter_id
-                            ),
+                "team":
+                    team_abbr,
 
-                        "date":
-                            current_date,
+                "opponent":
+                    opponent,
 
-                        "game_id":
-                            current_game_id,
+                "home_away":
+                    home_away
+            })
 
-                        "opponent":
-                            opponent,
+print(
+    f"Collected {len(all_home_runs)} HR.\n"
+)
 
-                        "home_away":
-                            home_away,
+all_home_runs.sort(
+    key=lambda x: x["game_id"][3:]
+)
 
-                        "career_hr_before":
-                            career_hr[batter_id] - 2,
+print("\nFirst 20 games after sorting:\n")
 
-                        "hrs_in_game":
-                            2
-                    }
+for hr in all_home_runs[:20]:
 
-                else:
+    print(hr["game_id"])
 
-                    # Mark as already having a first
-                    # multi-HR game with another team
-                    first_multi_hr[batter_id] = None
+# --------------------------------------------------
+# PASS 2
+# Process HR chronologically
+# --------------------------------------------------
 
-            # If first career multi-HR game
-            # happened with Cleveland,
-            # update 3-HR and 4-HR games.
-            elif (
-                batter_id in first_multi_hr
-                and first_multi_hr[batter_id] is not None
-                and first_multi_hr[batter_id]["game_id"]
-                == current_game_id
-            ):
+career_hr = defaultdict(int)
+game_hr = defaultdict(int)
 
-                first_multi_hr[batter_id][
-                    "hrs_in_game"
-                ] = game_hr[batter_id]
+first_multi_hr = {}
+
+for hr in all_home_runs:
+
+    batter = hr["batter"]
+
+    game_key = (
+        hr["game_id"],
+        batter
+    )
+
+    career_before = career_hr[batter]
+
+    career_hr[batter] += 1
+    game_hr[game_key] += 1
+
+    # First career multi-HR game
+    if (
+        game_hr[game_key] == 2
+        and batter not in first_multi_hr
+    ):
+
+        if hr["team"] == TEAM:
+
+            first_multi_hr[batter] = {
+
+                "player":
+                    hr["player"],
+
+                "career_hr_before":
+                    career_before,
+
+                "date":
+                    hr["date"],
+
+                "game_id":
+                    hr["game_id"],
+
+                "opponent":
+                    hr["opponent"],
+
+                "home_away":
+                    hr["home_away"],
+
+                "hrs_in_game":
+                    2
+            }
+
+        else:
+
+            # First multi-HR game occurred
+            # with another club.
+            first_multi_hr[batter] = None
+
+    # Update 3-HR and 4-HR games
+    elif (
+        batter in first_multi_hr
+        and first_multi_hr[batter] is not None
+        and first_multi_hr[batter]["game_id"]
+        == hr["game_id"]
+    ):
+
+        first_multi_hr[batter][
+            "hrs_in_game"
+        ] = game_hr[game_key]
 
 # --------------------------------------------------
 # Build Results
@@ -305,7 +341,7 @@ for event_file in event_files:
 
 results = []
 
-for player_id, row in first_multi_hr.items():
+for row in first_multi_hr.values():
 
     if row is None:
         continue
@@ -318,9 +354,12 @@ for player_id, row in first_multi_hr.items():
     results.append(row)
 
 results.sort(
+
     key=lambda x: (
+
         x["career_hr_before"],
-        x["date"]
+        x["date"],
+        x["player"]
     )
 )
 
@@ -353,13 +392,14 @@ with open(
     )
 
     writer.writeheader()
-
     writer.writerows(results)
 
-print(f"\nCSV written: {OUTPUT_FILE}")
+print(
+    f"\nCSV written: {OUTPUT_FILE}"
+)
 
 print(
-    f"Found {len(results)} players.\n"
+    f"\nFound {len(results)} players.\n"
 )
 
 print("Top 50:\n")
@@ -367,9 +407,14 @@ print("Top 50:\n")
 for row in results[:50]:
 
     print(
+
         f"{row['career_hr_before']:>3} | "
+
         f"{row['player']:<25} | "
+
         f"{row['date']} | "
+
         f"{row['opponent']} | "
+
         f"{row['hrs_in_game']} HR"
     )
