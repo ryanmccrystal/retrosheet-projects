@@ -216,15 +216,20 @@ for event_file in event_files:
             batter_id = fields[3]
             event = fields[6]
 
-            if (
-                current_date == "1946/09/20"
-                and (
-                    visteam == "DET"
-                    or hometeam == "DET"
-                )
-                and line.startswith("play,")
-            ):
-                print(line)
+            # --------------------------
+            # DEBUG
+            # --------------------------
+            
+            if line.startswith("info,date,"):
+                print("DATE:", line)
+            
+            if line.startswith("info,visteam,"):
+                print("VIS:", line)
+            
+            if line.startswith("info,hometeam,"):
+                print("HOME:", line)
+
+            # --------------------------
 
             if not event.startswith("HR"):
                 continue
