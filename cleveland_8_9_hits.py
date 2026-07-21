@@ -175,7 +175,7 @@ for event_file in sorted(event_files):
                     
                             "hits_9": hits.get(p9_id, 0),
                     
-                            "combined_hits": combined_hits
+                            "combined_hits": combined_hits,
 
                             "home_runs_8": home_runs.get(p8_id, 0),
 
@@ -343,7 +343,7 @@ for event_file in sorted(event_files):
         
                 "hits_9": hits.get(p9_id, 0),
         
-                "combined_hits": combined_hits
+                "combined_hits": combined_hits,
 
                 "home_runs_8": home_runs.get(p8_id, 0),
 
