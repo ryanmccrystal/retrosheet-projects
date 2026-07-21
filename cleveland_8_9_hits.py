@@ -184,6 +184,15 @@ for event_file in event_files:
                             hits[starters[9]["id"]]
                         )
 
+                        print(
+                            current_date,
+                            starters[8]["name"],
+                            hits[starters[8]["id"]],
+                            starters[9]["name"],
+                            hits[starters[9]["id"]],
+                            total
+                        )
+                        
                         if total >= 7:
 
                             opponent = (
