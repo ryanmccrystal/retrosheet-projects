@@ -216,6 +216,16 @@ for event_file in event_files:
             batter_id = fields[3]
             event = fields[6]
 
+            if (
+                batter_id == "robie101"
+                and event.startswith("HR")
+            ):
+                print(
+                    current_date,
+                    current_game_id,
+                    os.path.basename(event_file)
+                )            
+
             if batter_id != "robie101":
                 continue
 
