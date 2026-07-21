@@ -163,10 +163,16 @@ for event_file in event_files:
         event_file,
         encoding="latin-1"
     ) as f:
-
+    
+        if os.path.basename(event_file) == "1946CLE.EVA":
+            print(f"Reading {event_file}")
+    
         for raw_line in f:
-
+    
             line = raw_line.strip()
+    
+            if "CLE194609200" in line or "robie101" in line:
+                print(line)
 
             # --------------------------
             # New Game
