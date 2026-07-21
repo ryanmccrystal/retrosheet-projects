@@ -94,6 +94,7 @@ for event_file in sorted(event_files):
     visteam = None
     hometeam = None
     starters = {}
+    hits = {}
 
     with open(
         event_file,
@@ -137,13 +138,15 @@ for event_file in sorted(event_files):
                         f"vs {opponent}"
                     )
                     
-                    for player in sorted(
-                        starters.values(),
-                        key=lambda x: x["order"]
+                    for player_id, player in sorted(
+                        starters.items(),
+                        key=lambda x: x[1]["order"]
                     ):
                     
                         print(
-                            f"   {player['order']}: {player['name']}"
+                            f"   {player['order']}: "
+                            f"{player['name']} "
+                            f"({hits.get(player_id, 0)} H)"
                         )
                     
                     print()
@@ -156,6 +159,7 @@ for event_file in sorted(event_files):
                 hometeam = None
                 
                 starters = {}
+                hits = {}
                 
                 continue
 
@@ -240,13 +244,15 @@ for event_file in sorted(event_files):
             f"vs {opponent}"
         )
         
-        for player in sorted(
-            starters.values(),
-            key=lambda x: x["order"]
+        for player_id, player in sorted(
+            starters.items(),
+            key=lambda x: x[1]["order"]
         ):
         
             print(
-                f"   {player['order']}: {player['name']}"
+                f"   {player['order']}: "
+                f"{player['name']} "
+                f"({hits.get(player_id, 0)} H)"
             )
         
         print()
