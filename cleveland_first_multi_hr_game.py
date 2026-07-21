@@ -167,15 +167,18 @@ for event_file in event_files:
         if os.path.basename(event_file) == "1946CLE.EVA":
             print(f"Reading {event_file}")
     
+        current_debug_game = False
+        
         for raw_line in f:
-    
+        
             line = raw_line.strip()
-    
+        
             if line.startswith("id,"):
+        
                 current_debug_game = (
-                    "CLE194609200" in line
+                    line == "id,CLE194609200"
                 )
-            
+        
             if current_debug_game:
                 print(line)
 
