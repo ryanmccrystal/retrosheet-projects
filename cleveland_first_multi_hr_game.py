@@ -12,8 +12,8 @@ from collections import defaultdict
 
 TEAM = "CLE"
 
-START_YEAR = 1910
-END_YEAR = 2025
+START_YEAR = 1946
+END_YEAR = 1946
 
 OUTPUT_FILE = "cleveland_first_multi_hr_game.csv"
 
@@ -192,6 +192,23 @@ for event_file in event_files:
 
             if not line.startswith("play,"):
                 continue
+
+            fields = line.split(",")
+
+            batting_team = fields[2]
+            batter_id = fields[3]
+            event = fields[6]
+            
+            if (
+                current_game_id == "CLE194609200"
+                and batter_id == "robie101"
+            ):
+                print(
+                    f"{current_date} | "
+                    f"Inning {fields[1]} | "
+                    f"Batting Team {batting_team} | "
+                    f"{event}"
+                )
 
             fields = line.split(",")
 
