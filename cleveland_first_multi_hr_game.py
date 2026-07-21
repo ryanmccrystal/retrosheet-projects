@@ -217,17 +217,14 @@ for event_file in event_files:
             event = fields[6]
 
             if (
-                batter_id == "robie101"
-                and event.startswith("HR")
+                current_date == "1946/09/20"
+                and (
+                    visteam == "DET"
+                    or hometeam == "DET"
+                )
+                and line.startswith("play,")
             ):
-                print(
-                    current_date,
-                    current_game_id,
-                    os.path.basename(event_file)
-                )            
-
-            if batter_id != "robie101":
-                continue
+                print(line)
 
             if not event.startswith("HR"):
                 continue
