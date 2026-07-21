@@ -313,6 +313,9 @@ for event_file in event_files:
                     continue
     
                 fields = line.split(",")
+
+                print(fields)
+                break
     
                 batter_id = fields[3]
                 event = fields[6]
