@@ -68,7 +68,7 @@ for filename in sorted(os.listdir(year_dir)):
             elif line.startswith("play,"):
 
                 if hometeam == "CLE":
-
+            
                     print(
                         current_game,
                         current_date,
@@ -76,5 +76,7 @@ for filename in sorted(os.listdir(year_dir)):
                         "at",
                         hometeam
                     )
-
-                    break
+            
+                    # Skip the rest of THIS game,
+                    # not the rest of the file.
+                    hometeam = None
