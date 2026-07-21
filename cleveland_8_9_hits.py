@@ -138,16 +138,24 @@ for event_file in sorted(event_files):
                         f"vs {opponent}"
                     )
                     
+                    combined_hits = 0
+
                     for player_id, player in sorted(
                         starters.items(),
                         key=lambda x: x[1]["order"]
                     ):
                     
+                        player_hits = hits.get(player_id, 0)
+                    
+                        combined_hits += player_hits
+                    
                         print(
                             f"   {player['order']}: "
                             f"{player['name']} "
-                            f"({hits.get(player_id, 0)} H)"
+                            f"({player_hits} H)"
                         )
+                    
+                    print(f"   Combined: {combined_hits}")
                     
                     print()
 
@@ -267,16 +275,24 @@ for event_file in sorted(event_files):
             f"vs {opponent}"
         )
         
+        combined_hits = 0
+
         for player_id, player in sorted(
             starters.items(),
             key=lambda x: x[1]["order"]
         ):
         
+            player_hits = hits.get(player_id, 0)
+        
+            combined_hits += player_hits
+        
             print(
                 f"   {player['order']}: "
                 f"{player['name']} "
-                f"({hits.get(player_id, 0)} H)"
+                f"({player_hits} H)"
             )
+        
+        print(f"   Combined: {combined_hits}")
         
         print()
 
