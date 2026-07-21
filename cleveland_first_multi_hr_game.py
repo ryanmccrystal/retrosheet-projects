@@ -171,7 +171,12 @@ for event_file in event_files:
     
             line = raw_line.strip()
     
-            if "CLE194609200" in line or "robie101" in line:
+            if line.startswith("id,"):
+                current_debug_game = (
+                    "CLE194609200" in line
+                )
+            
+            if current_debug_game:
                 print(line)
 
             # --------------------------
