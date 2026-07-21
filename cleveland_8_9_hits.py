@@ -316,6 +316,10 @@ for event_file in event_files:
                 
                 batter_id = fields[3]
                 event = fields[6]
+
+                if current_game == "CLE200004140":
+                    if batter_id in ("frymt001", "aloms001"):
+                        print(current_game, batter_id, event)
                 
                 # Count hits by the starting
                 # #8 and #9 hitters only.
