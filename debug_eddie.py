@@ -25,11 +25,7 @@ with zipfile.ZipFile(zip_file, "r") as z:
 
 print("1946 Cleveland home games:\n")
 
-print("\nEvent files found:\n")
-
-for filename in sorted(os.listdir(year_dir)):
-    if filename.endswith(".EVA") or filename.endswith(".EVN"):
-        print(filename)
+target_game = "CLE194609210"
 
 for filename in sorted(os.listdir(year_dir)):
 
@@ -38,10 +34,7 @@ for filename in sorted(os.listdir(year_dir)):
 
     path = os.path.join(year_dir, filename)
 
-    current_game = None
-    current_date = None
-    hometeam = None
-    visteam = None
+    in_game = False
 
     with open(path, encoding="latin-1") as f:
 
@@ -50,33 +43,7 @@ for filename in sorted(os.listdir(year_dir)):
             line = line.rstrip()
 
             if line.startswith("id,"):
-                current_game = line[3:]
+                in_game = (line[3:] == target_game)
 
-                current_date = None
-                hometeam = None
-                visteam = None
-
-            elif line.startswith("info,date,"):
-                current_date = line.split(",")[2]
-
-            elif line.startswith("info,hometeam,"):
-                hometeam = line.split(",")[2]
-
-            elif line.startswith("info,visteam,"):
-                visteam = line.split(",")[2]
-
-            elif line.startswith("play,"):
-
-                if hometeam == "CLE":
-            
-                    print(
-                        current_game,
-                        current_date,
-                        visteam,
-                        "at",
-                        hometeam
-                    )
-            
-                    # Skip the rest of THIS game,
-                    # not the rest of the file.
-                    hometeam = None
+            if in_game:
+                print(line)
