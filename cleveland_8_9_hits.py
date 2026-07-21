@@ -137,11 +137,14 @@ for event_file in sorted(event_files):
                         f"vs {opponent}"
                     )
                     
-                    if 8 in starters:
-                        print(f"   8: {starters[8]['name']}")
+                    for player in sorted(
+                        starters.values(),
+                        key=lambda x: x["order"]
+                    ):
                     
-                    if 9 in starters:
-                        print(f"   9: {starters[9]['name']}")
+                        print(
+                            f"   {player['order']}: {player['name']}"
+                        )
                     
                     print()
 
@@ -179,7 +182,7 @@ for event_file in sorted(event_files):
             # --------------------------
             
             if line.startswith("start,"):
-            
+
                 fields = line.split(",")
             
                 player_id = fields[1]
@@ -187,7 +190,7 @@ for event_file in sorted(event_files):
                 team = fields[3]
                 batting_order = int(fields[4])
             
-                # Keep only Cleveland starters
+                # Keep only Cleveland's starting #8 and #9 hitters
                 if (
                     (visteam == TEAM and team == "0")
                     or
@@ -196,9 +199,12 @@ for event_file in sorted(event_files):
             
                     if batting_order in (8, 9):
             
-                        starters[batting_order] = {
-                            "id": player_id,
-                            "name": player_name
+                        starters[player_id] = {
+            
+                            "name": player_name,
+            
+                            "order": batting_order
+            
                         }
             
                 continue
@@ -234,11 +240,14 @@ for event_file in sorted(event_files):
             f"vs {opponent}"
         )
         
-        if 8 in starters:
-            print(f"   8: {starters[8]['name']}")
+        for player in sorted(
+            starters.values(),
+            key=lambda x: x["order"]
+        ):
         
-        if 9 in starters:
-            print(f"   9: {starters[9]['name']}")
+            print(
+                f"   {player['order']}: {player['name']}"
+            )
         
         print()
 
