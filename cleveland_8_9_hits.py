@@ -161,10 +161,6 @@ for event_file in event_files:
 
             line = raw_line.strip()
 
-            print(line)
-            if line.startswith("play,"):
-                break
-
             # --------------------------
             # New Game
             # --------------------------
