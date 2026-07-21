@@ -308,33 +308,27 @@ for event_file in event_files:
                 # --------------------------
                 # Play Records
                 # --------------------------
-    
+                
                 if not line.startswith("play,"):
                     continue
-    
+                
                 fields = line.split(",")
-
-                print(fields)
-                break
-    
+                
                 batter_id = fields[3]
                 event = fields[6]
-
-                if batter_id == starters.get(8, {}).get("id") or batter_id == starters.get(9, {}).get("id"):
-                    print(batter_id, event)
-    
+                
                 # Count hits by the starting
                 # #8 and #9 hitters only.
                 if event.startswith(("S", "D", "T", "HR")):
-    
+                
                     for slot in (8, 9):
-    
+                
                         if (
                             slot in starters
                             and batter_id
                             == starters[slot]["id"]
                         ):
-    
+                
                             hits[batter_id] += 1
     
         # --------------------------------------------------
