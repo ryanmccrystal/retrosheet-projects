@@ -25,6 +25,12 @@ with zipfile.ZipFile(zip_file, "r") as z:
 
 print("1946 Cleveland home games:\n")
 
+print("\nEvent files found:\n")
+
+for filename in sorted(os.listdir(year_dir)):
+    if filename.endswith(".EVA") or filename.endswith(".EVN"):
+        print(filename)
+
 for filename in sorted(os.listdir(year_dir)):
 
     if not (filename.endswith(".EVA") or filename.endswith(".EVN")):
