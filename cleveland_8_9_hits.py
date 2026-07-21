@@ -213,6 +213,29 @@ for event_file in sorted(event_files):
             
                 continue
 
+            # --------------------------
+            # Play Records
+            # --------------------------
+            
+            if not line.startswith("play,"):
+                continue
+            
+            fields = line.split(",")
+            
+            batter_id = fields[3]
+            event = fields[6]
+            
+            if batter_id in starters:
+            
+                if event.startswith(("S", "D", "T", "HR")):
+            
+                    hits[batter_id] = hits.get(
+                        batter_id,
+                        0
+                    ) + 1
+            
+            continue
+
     # Print final game in file
     if (
         game_id
