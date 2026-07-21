@@ -12,8 +12,8 @@ from collections import defaultdict
 
 TEAM = "CLE"
 
-START_YEAR = 1946
-END_YEAR = 1946
+START_YEAR = 1910
+END_YEAR = 2025
 
 OUTPUT_FILE = "cleveland_first_multi_hr_game.csv"
 
@@ -164,23 +164,9 @@ for event_file in event_files:
         encoding="latin-1"
     ) as f:
     
-        if os.path.basename(event_file) == "1946CLE.EVA":
-            print(f"Reading {event_file}")
-    
-        current_debug_game = False
-        
         for raw_line in f:
-        
+
             line = raw_line.strip()
-        
-            if line.startswith("id,"):
-        
-                current_debug_game = (
-                    line == "id,CLE194609200"
-                )
-        
-            if current_debug_game:
-                print(line)
 
             # --------------------------
             # New Game
@@ -230,21 +216,6 @@ for event_file in event_files:
             batter_id = fields[3]
             event = fields[6]
 
-            # --------------------------
-            # DEBUG
-            # --------------------------
-            
-            if line.startswith("info,date,"):
-                print("DATE:", line)
-            
-            if line.startswith("info,visteam,"):
-                print("VIS:", line)
-            
-            if line.startswith("info,hometeam,"):
-                print("HOME:", line)
-
-            # --------------------------
-
             if not event.startswith("HR"):
                 continue
 
@@ -265,14 +236,6 @@ for event_file in event_files:
                 if batting_team == "0"
                 else "Home"
             )
-
-            if batter_id == "robie101":
-                print(
-                    current_date,
-                    current_game_id,
-                    career_hr[batter_id],
-                    event
-                )
 
             # Count ALL career HR
             career_hr[batter_id] += 1
