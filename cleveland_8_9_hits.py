@@ -87,6 +87,8 @@ print(
 
 game_count = 0
 
+results = []
+
 for event_file in sorted(event_files):
 
     game_id = None
@@ -141,29 +143,36 @@ for event_file in sorted(event_files):
                     combined_hits = sum(hits.values())
 
                     if combined_hits >= 7:
-                    
-                        print(
-                            f"{game_date}  "
-                            f"{game_id}  "
-                            f"{home_away}  "
-                            f"vs {opponent}"
-                        )
-                    
-                        for player_id, player in sorted(
+
+                        players = sorted(
                             starters.items(),
                             key=lambda x: x[1]["order"]
-                        ):
+                        )
                     
-                            player_hits = hits.get(player_id, 0)
+                        p8_id, p8 = players[0]
+                        p9_id, p9 = players[1]
                     
-                            print(
-                                f"   {player['order']}: "
-                                f"{player['name']} "
-                                f"({player_hits} H)"
-                            )
+                        results.append({
                     
-                        print(f"   Combined: {combined_hits}")
-                        print()
+                            "date": game_date,
+                    
+                            "game_id": game_id,
+                    
+                            "opponent": opponent,
+                    
+                            "home_away": home_away,
+                    
+                            "player_8": p8["name"],
+                    
+                            "hits_8": hits.get(p8_id, 0),
+                    
+                            "player_9": p9["name"],
+                    
+                            "hits_9": hits.get(p9_id, 0),
+                    
+                            "combined_hits": combined_hits
+                    
+                        })
 
                 # Start new game
                 game_id = line.split(",")[1]
@@ -284,30 +293,44 @@ for event_file in sorted(event_files):
         combined_hits = sum(hits.values())
 
         if combined_hits >= 7:
-        
-            print(
-                f"{game_date}  "
-                f"{game_id}  "
-                f"{home_away}  "
-                f"vs {opponent}"
-            )
-        
-            for player_id, player in sorted(
+
+            players = sorted(
                 starters.items(),
                 key=lambda x: x[1]["order"]
-            ):
+            )
         
-                player_hits = hits.get(player_id, 0)
+            p8_id, p8 = players[0]
+            p9_id, p9 = players[1]
         
-                print(
-                    f"   {player['order']}: "
-                    f"{player['name']} "
-                    f"({player_hits} H)"
-                )
+            results.append({
         
-            print(f"   Combined: {combined_hits}")
-            print()
+                "date": game_date,
+        
+                "game_id": game_id,
+        
+                "opponent": opponent,
+        
+                "home_away": home_away,
+        
+                "player_8": p8["name"],
+        
+                "hits_8": hits.get(p8_id, 0),
+        
+                "player_9": p9["name"],
+        
+                "hits_9": hits.get(p9_id, 0),
+        
+                "combined_hits": combined_hits
+        
+            })
 
-print(
-    f"\nFound {game_count} Cleveland games."
-)
+print(f"\nFound {len(results)} qualifying games.\n")
+
+for row in results:
+
+    print(
+        f"{row['date']}  "
+        f"{row['player_8']} ({row['hits_8']})  "
+        f"{row['player_9']} ({row['hits_9']})  "
+        f"= {row['combined_hits']}"
+    )
