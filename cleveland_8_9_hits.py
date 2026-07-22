@@ -139,7 +139,7 @@ for event_file in sorted(event_files):
 
                     if (
                         combined_hits >= 7
-                        and combined_home_runs >= 3
+                        and combined_home_runs >= 2
                     ):
 
                         players = sorted(
@@ -255,7 +255,7 @@ for event_file in sorted(event_files):
             
             if batter_id in starters:
 
-                if event.startswith(("S", "D", "T", "HR")):
+                if event.startswith(("S", "D", "T", "")):
             
                     hits[batter_id] = hits.get(
                         batter_id,
@@ -300,7 +300,7 @@ for event_file in sorted(event_files):
 
         if (
             combined_hits >= 7
-            and combined_home_runs >= 3
+            and combined_home_runs >= 2
         ):
 
             players = sorted(
@@ -341,12 +341,14 @@ for event_file in sorted(event_files):
 
 print(f"\nFound {len(results)} qualifying games.\n")
 
-print(
-    f"{row['date']}  "
-    f"{row['player_8']} "
-    f"{row['hits_8']} H, {row['home_runs_8']} HR | "
-    f"{row['player_9']} "
-    f"{row['hits_9']} H, {row['home_runs_9']} HR | "
-    f"Totals: {row['combined_hits']} H, "
-    f"{row['combined_home_runs']} HR"
-)
+for row in results:
+
+    print(
+        f"{row['date']}  "
+        f"{row['player_8']} "
+        f"{row['hits_8']} H, {row['home_runs_8']} HR | "
+        f"{row['player_9']} "
+        f"{row['hits_9']} H, {row['home_runs_9']} HR | "
+        f"Totals: {row['combined_hits']} H, "
+        f"{row['combined_home_runs']} HR"
+    )
