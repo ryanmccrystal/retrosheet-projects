@@ -255,7 +255,7 @@ for event_file in sorted(event_files):
             
             if batter_id in starters:
 
-                if event.startswith(("S", "D", "T", "")):
+                if event.startswith(("S", "D", "T", "HR")):
             
                     hits[batter_id] = hits.get(
                         batter_id,
