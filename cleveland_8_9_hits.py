@@ -8,7 +8,7 @@ import requests
 
 TEAM = "CLE"
 
-START_YEAR = 1994
+START_YEAR = 1910
 END_YEAR = 2025
 
 DATA_DIR = "data"
@@ -133,13 +133,6 @@ for event_file in sorted(event_files):
                     )
 
                     game_count += 1
-
-                    print(
-                        f"{game_date}  "
-                        f"{game_id}  "
-                        f"{home_away}  "
-                        f"vs {opponent}"
-                    )
                     
                     combined_hits = sum(hits.values())
                     combined_home_runs = sum(home_runs.values())
@@ -301,13 +294,6 @@ for event_file in sorted(event_files):
         )
 
         game_count += 1
-
-        print(
-            f"{game_date}  "
-            f"{game_id}  "
-            f"{home_away}  "
-            f"vs {opponent}"
-        )
         
         combined_hits = sum(hits.values())
         combined_home_runs = sum(home_runs.values())
