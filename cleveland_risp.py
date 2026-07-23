@@ -14,6 +14,9 @@ schedule = statsapi.schedule(
     team=114
 )
 
+print(schedule[0]["game_date"])
+print(schedule[-1]["game_date"])
+
 print(f"Found {len(schedule)} games.\n")
 
 for game in schedule:
