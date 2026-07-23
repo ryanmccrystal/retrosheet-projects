@@ -23,6 +23,18 @@ for year in range(
 
     for game in schedule:
 
+        if game["game_type"] != "R":
+            continue
+    
+        gamePk = game["game_id"]
+    
+        boxscore = statsapi.get(
+            "game",
+            {
+                "gamePk": gamePk
+            }
+        )
+
         gamePk = game["game_id"]
     
         boxscore = statsapi.get(
