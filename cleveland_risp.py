@@ -3,8 +3,8 @@ import statsapi
 
 TEAM = "Cleveland Guardians"
 
-START_YEAR = 2005
-END_YEAR = 2025
+START_YEAR = 2026
+END_YEAR = 2026
 
 for year in range(
     START_YEAR,
