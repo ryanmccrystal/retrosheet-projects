@@ -98,7 +98,7 @@ for game in schedule:
     
         if (
             hits == 0
-            and at_bats >= 10
+            and at_bats >= 7
         ):
     
             print(
