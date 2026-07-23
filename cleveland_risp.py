@@ -3,23 +3,25 @@ import statsapi
 
 TEAM = "Cleveland Guardians"
 
-START_DATE = "2005-03-10"
-END_DATE = "2026-07-23"
+START_YEAR = 2005
+END_YEAR = 2025
 
-print("Getting Cleveland schedule...")
+for year in range(
+    START_YEAR,
+    END_YEAR + 1
+):
 
-schedule = statsapi.schedule(
-    start_date=START_DATE,
-    end_date=END_DATE,
-    team=114
-)
+    print(f"\nProcessing {year}...")
 
-print(schedule[0]["game_date"])
-print(schedule[-1]["game_date"])
+    schedule = statsapi.schedule(
+        start_date=f"{year}-01-01",
+        end_date=f"{year}-12-31",
+        team=114
+    )
 
-print(f"Found {len(schedule)} games.\n")
+    print(f"Found {len(schedule)} games.")
 
-for game in schedule:
+    for game in schedule:
 
     gamePk = game["game_id"]
 
