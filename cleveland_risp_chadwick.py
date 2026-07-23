@@ -95,10 +95,13 @@ result = subprocess.run(
         sample_file
     ],
     capture_output=True,
-    text=True,
-    check=True
+    text=True
 )
 
-lines = result.stdout.splitlines()
+print("Return code:", result.returncode)
 
-print("\n".join(lines[:20]))
+print("\nSTDOUT:")
+print(result.stdout)
+
+print("\nSTDERR:")
+print(result.stderr)
