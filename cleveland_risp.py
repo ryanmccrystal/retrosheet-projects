@@ -1,183 +1,84 @@
-import os
-import zipfile
-import requests
+import re
+import statsapi
 
-# --------------------------------------------------
-# Configuration
-# --------------------------------------------------
+TEAM = "Cleveland Guardians"
 
-TEAM = "CLE"
+START_DATE = "2020-07-23"
+END_DATE = "2020-09-27"
 
-START_YEAR = 2020
-END_YEAR = 2020
+print("Getting Cleveland schedule...")
 
-DATA_DIR = "data"
-
-os.makedirs(DATA_DIR, exist_ok=True)
-
-# --------------------------------------------------
-# Download Event Files
-# --------------------------------------------------
-
-event_files = []
-
-for year in range(
-    START_YEAR,
-    END_YEAR + 1
-):
-
-    zip_file = os.path.join(
-        DATA_DIR,
-        f"{year}eve.zip"
-    )
-
-    year_dir = os.path.join(
-        DATA_DIR,
-        str(year)
-    )
-
-    if not os.path.exists(zip_file):
-
-        print(f"Downloading {year}...")
-
-        url = (
-            f"https://www.retrosheet.org/events/{year}eve.zip"
-        )
-
-        r = requests.get(url)
-
-        if r.status_code != 200:
-
-            print(f"Skipping {year}")
-            continue
-
-        with open(zip_file, "wb") as f:
-            f.write(r.content)
-
-    os.makedirs(
-        year_dir,
-        exist_ok=True
-    )
-
-    with zipfile.ZipFile(
-        zip_file,
-        "r"
-    ) as z:
-
-        z.extractall(year_dir)
-
-    for file in os.listdir(year_dir):
-
-        if file.endswith((".EVA", ".EVN")):
-
-            event_files.append(
-                os.path.join(
-                    year_dir,
-                    file
-                )
-            )
-
-print(
-    f"\nFound {len(event_files)} event files.\n"
+schedule = statsapi.schedule(
+    start_date=START_DATE,
+    end_date=END_DATE,
+    team=114
 )
 
-# --------------------------------------------------
-# Process Games
-# --------------------------------------------------
+print(f"Found {len(schedule)} games.\n")
 
-for event_file in sorted(event_files):
+for game in schedule:
 
-    game_id = None
-    game_date = None
-    visteam = None
-    hometeam = None
-    cleveland_team = None
+    gamePk = game["game_id"]
 
-    with open(
-        event_file,
-        encoding="latin-1"
-    ) as f:
+    boxscore = statsapi.get(
+        "game",
+        {
+            "gamePk": gamePk
+        }
+    )
 
-        for raw_line in f:
+    home_team = boxscore["gameData"]["teams"]["home"]["name"]
 
-            line = raw_line.strip()
+    if home_team == TEAM:
 
-            # --------------------------
-            # New Game
-            # --------------------------
+        info = (
+            boxscore["liveData"]
+            ["boxscore"]
+            ["teams"]
+            ["home"]
+            ["info"]
+        )
 
-            if line.startswith("id,"):
+        opponent = (
+            boxscore["gameData"]
+            ["teams"]
+            ["away"]
+            ["abbreviation"]
+        )
 
-                game_id = line.split(",")[1]
+        home_away = "Home"
 
-                game_date = None
-                visteam = None
-                hometeam = None
-                cleveland_team = None
+    else:
 
-                continue
+        info = (
+            boxscore["liveData"]
+            ["boxscore"]
+            ["teams"]
+            ["away"]
+            ["info"]
+        )
 
-            # --------------------------
-            # Game Info
-            # --------------------------
+        opponent = (
+            boxscore["gameData"]
+            ["teams"]
+            ["home"]
+            ["abbreviation"]
+        )
 
-            if line.startswith("info,date,"):
+        home_away = "Away"
 
-                game_date = line.split(",")[2]
+    risp = None
 
-                continue
+    for section in info:
 
-            if line.startswith("info,visteam,"):
+        for field in section.get("fieldList", []):
 
-                visteam = line.split(",")[2]
+            if field["label"] == "Team RISP":
 
-                continue
+                risp = field["value"]
 
-            if line.startswith("info,hometeam,"):
-
-                hometeam = line.split(",")[2]
-
-                continue
-
-            # --------------------------
-            # Determine Cleveland's batting side
-            # --------------------------
-
-            if (
-                visteam is not None
-                and hometeam is not None
-                and cleveland_team is None
-            ):
-
-                if visteam == TEAM:
-
-                    cleveland_team = "0"
-
-                elif hometeam == TEAM:
-
-                    cleveland_team = "1"
-
-            # --------------------------
-            # Play Records
-            # --------------------------
-
-            if not line.startswith("play,"):
-                continue
-
-            fields = line.split(",")
-
-            batting_team = fields[2]
-
-            if batting_team != cleveland_team:
-                continue
-
-            if game_id == "CHA202008070":
-                print(line)
-
-            print(
-                game_date,
-                game_id,
-                batting_team,
-                fields[3],
-                fields[6]
-            )
+    print(
+        f"{game['game_date']}  "
+        f"{home_away} vs {opponent}  "
+        f"{risp}"
+    )
