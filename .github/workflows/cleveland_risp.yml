@@ -16,6 +16,13 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Check for Chadwick tools
+        run: |
+          which cwevent || true
+          which cwgame || true
+          cwevent --version || true
+          cwgame --version || true
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
