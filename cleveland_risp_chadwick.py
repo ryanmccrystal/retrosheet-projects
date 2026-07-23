@@ -84,7 +84,21 @@ print(
 
 print("\nTesting Chadwick...\n")
 
-subprocess.run(
-    ["cwevent", "-d"],
+sample_file = event_files[0]
+
+result = subprocess.run(
+    [
+        "cwevent",
+        "-n",
+        "-f",
+        "0,2,3,10,27,28,29,34,36,37",
+        sample_file
+    ],
+    capture_output=True,
+    text=True,
     check=True
 )
+
+lines = result.stdout.splitlines()
+
+print("\n".join(lines[:20]))
