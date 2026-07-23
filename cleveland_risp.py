@@ -27,10 +27,10 @@ for game in schedule:
         }
     )
 
-    home_team = boxscore["gameData"]["teams"]["home"]["name"]
+    home_id = boxscore["gameData"]["teams"]["home"]["id"]
 
-    if home_team == TEAM:
-
+    if home_id == 114:
+    
         info = (
             boxscore["liveData"]
             ["boxscore"]
@@ -38,18 +38,18 @@ for game in schedule:
             ["home"]
             ["info"]
         )
-
+    
         opponent = (
             boxscore["gameData"]
             ["teams"]
             ["away"]
             ["abbreviation"]
         )
-
+    
         home_away = "Home"
-
+    
     else:
-
+    
         info = (
             boxscore["liveData"]
             ["boxscore"]
@@ -57,14 +57,14 @@ for game in schedule:
             ["away"]
             ["info"]
         )
-
+    
         opponent = (
             boxscore["gameData"]
             ["teams"]
             ["home"]
             ["abbreviation"]
         )
-
+    
         home_away = "Away"
 
     risp = None
