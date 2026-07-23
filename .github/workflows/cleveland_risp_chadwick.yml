@@ -1,0 +1,37 @@
+name: Cleveland RISP (Chadwick)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-search:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Install Chadwick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chadwick
+
+      - name: Verify Chadwick installation
+        run: |
+          cwevent -h
+
+      - name: Run Cleveland RISP Chadwick search
+        run: |
+          python cleveland_risp_chadwick.py
