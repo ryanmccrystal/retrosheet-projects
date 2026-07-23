@@ -67,18 +67,42 @@ for game in schedule:
     
         home_away = "Away"
 
-    risp = None
-
-    for section in info:
-
-        for field in section.get("fieldList", []):
-
-            if field["label"] == "Team RISP":
-
-                risp = field["value"]
-
-    print(
-        f"{game['game_date']}  "
-        f"{home_away} vs {opponent}  "
-        f"{risp}"
-    )
+        risp = None
+        hits = None
+        at_bats = None
+    
+        for section in info:
+    
+            for field in section.get("fieldList", []):
+    
+                if field["label"] == "Team RISP":
+    
+                    risp = field["value"]
+    
+                    if risp:
+    
+                        match = re.search(
+                            r"(\d+)-for-(\d+)",
+                            risp
+                        )
+    
+                        if match:
+    
+                            hits = int(
+                                match.group(1)
+                            )
+    
+                            at_bats = int(
+                                match.group(2)
+                            )
+    
+        if (
+            hits == 0
+            and at_bats >= 15
+        ):
+    
+            print(
+                f"{game['game_date']}  "
+                f"{home_away} vs {opponent}  "
+                f"{hits}-for-{at_bats}"
+            )
