@@ -171,6 +171,9 @@ for event_file in sorted(event_files):
             if batting_team != cleveland_team:
                 continue
 
+            if game_id == "CHA202008070":
+                print(line)
+
             print(
                 game_date,
                 game_id,
