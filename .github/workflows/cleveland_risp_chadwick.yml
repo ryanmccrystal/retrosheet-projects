@@ -25,11 +25,11 @@ jobs:
 
       - name: Install Chadwick
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chadwick
+          brew install chadwick
 
-      - name: Verify Chadwick installation
+      - name: Verify Chadwick
         run: |
+          which cwevent
           cwevent -h
 
       - name: Run Cleveland RISP Chadwick search
