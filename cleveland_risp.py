@@ -3,8 +3,8 @@ import statsapi
 
 TEAM = "Cleveland Guardians"
 
-START_DATE = "2020-07-23"
-END_DATE = "2020-09-27"
+START_DATE = "2005-03-10"
+END_DATE = "2026-07-23"
 
 print("Getting Cleveland schedule...")
 
@@ -98,7 +98,7 @@ for game in schedule:
     
         if (
             hits == 0
-            and at_bats >= 15
+            and at_bats >= 10
         ):
     
             print(
