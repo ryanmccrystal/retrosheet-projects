@@ -85,6 +85,6 @@ print(
 print("\nTesting Chadwick...\n")
 
 subprocess.run(
-    ["cwevent", "-h"],
+    ["cwevent", "-d"],
     check=True
 )
