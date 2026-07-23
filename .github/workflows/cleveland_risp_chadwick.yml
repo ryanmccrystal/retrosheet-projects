@@ -23,9 +23,31 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Install Chadwick
+      - name: Install build tools
         run: |
-          brew install chadwick
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            git
+      
+      - name: Build Chadwick
+        run: |
+          git clone https://github.com/chadwickbureau/chadwick.git
+          cd chadwick
+          autoreconf -i
+          ./configure
+          make
+          sudo make install
+          sudo ldconfig
+      
+      - name: Verify Chadwick
+        run: |
+          which cwevent
+          cwevent -h
 
       - name: Verify Chadwick
         run: |
