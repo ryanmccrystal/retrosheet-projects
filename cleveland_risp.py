@@ -71,12 +71,21 @@ for year in range(
             )
         
             home_away = "Away"
+
+            print(
+                game["game_date"],
+                home_away,
+                opponent,
+                len(info)
+            )
     
             risp = None
             hits = None
             at_bats = None
         
             for section in info:
+
+                print(section)
         
                 for field in section.get("fieldList", []):
         
