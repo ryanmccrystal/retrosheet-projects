@@ -142,8 +142,12 @@ for sample_file in event_files:
             continue
     
         if current_game is None:
-    
+
             current_game = row["GAME_ID"]
+        
+            current_home_team = current_game[:3]
+        
+            current_away_team = row["AWAY_TEAM_ID"]
     
         if row["GAME_ID"] != current_game:
     
@@ -153,14 +157,36 @@ for sample_file in event_files:
                 risp_ab >= 10
             ):
             
+                game_date = (
+                    f"{current_game[3:7]}-"
+                    f"{current_game[7:9]}-"
+                    f"{current_game[9:11]}"
+                )
+                
+                home_away = (
+                    "Home"
+                    if current_home_team == TEAM
+                    else "Away"
+                )
+                
+                opponent = (
+                    current_away_team
+                    if home_away == "Home"
+                    else current_home_team
+                )
+                
                 print(
-                    current_game,
-                    "0-for",
-                    risp_ab
+                    f"{game_date}  "
+                    f"{home_away} vs {opponent}  "
+                    f"0-for-{risp_ab}"
                 )
     
             current_game = row["GAME_ID"]
-    
+
+            current_home_team = current_game[:3]
+            
+            current_away_team = row["AWAY_TEAM_ID"]
+            
             risp_ab = 0
             risp_hits = 0
     
@@ -186,9 +212,26 @@ for sample_file in event_files:
             risp_ab >= 10
         ):
         
+            game_date = (
+                f"{current_game[3:7]}-"
+                f"{current_game[7:9]}-"
+                f"{current_game[9:11]}"
+            )
+            
+            home_away = (
+                "Home"
+                if current_home_team == TEAM
+                else "Away"
+            )
+            
+            opponent = (
+                current_away_team
+                if home_away == "Home"
+                else current_home_team
+            )
+            
             print(
-                f"{current_game[:3]} "
-                f"{current_game[3:11]} "
-                f"{'Home' if current_game[:3] == TEAM else 'Away'} "
+                f"{game_date}  "
+                f"{home_away} vs {opponent}  "
                 f"0-for-{risp_ab}"
             )
