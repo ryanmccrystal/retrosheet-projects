@@ -85,101 +85,111 @@ print(
 
 print("\nTesting Chadwick...\n")
 
-sample_file = os.path.join(
-    DATA_DIR,
-    "2020",
-    "2020CLE.EVA"
-)
+for sample_file in event_files:
+
+    sample_dir = os.path.dirname(sample_file)
+
+    sample_name = os.path.basename(sample_file)
 
 sample_dir = os.path.dirname(sample_file)
 
 sample_name = os.path.basename(sample_file)
 
-result = subprocess.run(
-    [
-        "cwevent",
-        "-y",
-        "2020",
-        "-n",
-        "-f",
-        "0,1,2,3,10,27,28,29,36,37",
-        sample_name
-    ],
-    cwd=sample_dir,
-    capture_output=True,
-    text=True,
-    check=True
-)
-
-reader = csv.DictReader(
-    result.stdout.splitlines()
-)
-
-current_game = None
-
-risp_ab = 0
-risp_hits = 0
-
-for row in reader:
-
-    cleveland_batting = (
-
-        (
-            row["AWAY_TEAM_ID"] == TEAM
-            and
-            row["BAT_HOME_ID"] == "0"
-        )
-
-        or
-
-        (
-            row["GAME_ID"][:3] == TEAM
-            and
-            row["BAT_HOME_ID"] == "1"
-        )
-
+    result = subprocess.run(
+        [
+            "cwevent",
+            "-y",
+            "2020",
+            "-n",
+            "-f",
+            "0,1,2,3,10,27,28,29,36,37",
+            sample_name
+        ],
+        cwd=sample_dir,
+        capture_output=True,
+        text=True,
+        check=True
     )
-
-    if not cleveland_batting:
-        continue
-
-    if current_game is None:
-
-        current_game = row["GAME_ID"]
-
-    if row["GAME_ID"] != current_game:
-
-        print(
-            current_game,
-            risp_hits,
-            "for",
-            risp_ab
+    
+    reader = csv.DictReader(
+        result.stdout.splitlines()
+    )
+    
+    current_game = None
+    
+    risp_ab = 0
+    risp_hits = 0
+    
+    for row in reader:
+    
+        cleveland_batting = (
+    
+            (
+                row["AWAY_TEAM_ID"] == TEAM
+                and
+                row["BAT_HOME_ID"] == "0"
+            )
+    
+            or
+    
+            (
+                row["GAME_ID"][:3] == TEAM
+                and
+                row["BAT_HOME_ID"] == "1"
+            )
+    
         )
-
-        current_game = row["GAME_ID"]
-
-        risp_ab = 0
-        risp_hits = 0
+    
+        if not cleveland_batting:
+            continue
+    
+        if current_game is None:
+    
+            current_game = row["GAME_ID"]
+    
+        if row["GAME_ID"] != current_game:
+    
+            if (
+                risp_hits == 0
+                and
+                risp_ab >= 10
+            ):
+            
+                print(
+                    current_game,
+                    "0-for",
+                    risp_ab
+                )
+    
+            current_game = row["GAME_ID"]
+    
+            risp_ab = 0
+            risp_hits = 0
+    
+        if (
+            row["BASE2_RUN_ID"]
+            or
+            row["BASE3_RUN_ID"]
+        ):
+    
+            if row["AB_FL"] == "T":
+    
+                risp_ab += 1
+    
+                if int(row["H_CD"]) > 0:
+    
+                    risp_hits += 1
+    
+    if current_game is not None:
 
     if (
-        row["BASE2_RUN_ID"]
-        or
-        row["BASE3_RUN_ID"]
+        risp_hits == 0
+        and
+        risp_ab >= 10
     ):
-
-        if row["AB_FL"] == "T":
-
-            risp_ab += 1
-
-            if int(row["H_CD"]) > 0:
-
-                risp_hits += 1
-
-if current_game is not None:
-
-    print(
-        current_game,
-        risp_hits,
-        "for",
-        risp_ab
-    )
+    
+        print(
+            current_game,
+            "0-for",
+            risp_ab
+        )
