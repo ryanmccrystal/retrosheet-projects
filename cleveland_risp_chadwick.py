@@ -107,32 +107,75 @@ result = subprocess.run(
     check=True
 )
 
-output_file = os.path.join(
-    sample_dir,
-    "sample_events.csv"
+reader = csv.DictReader(
+    result.stdout.splitlines()
 )
 
-with open(
-    output_file,
-    "w",
-    encoding="utf-8"
-) as f:
+current_game = None
 
-    f.write(result.stdout)
+risp_ab = 0
+risp_hits = 0
 
-print(f"Saved {output_file}")
+for row in reader:
 
-with open(
-    output_file,
-    newline="",
-    encoding="utf-8"
-) as f:
+    cleveland_batting = (
 
-    reader = csv.DictReader(f)
+        (
+            row["AWAY_TEAM_ID"] == TEAM
+            and
+            row["BAT_HOME_ID"] == "0"
+        )
 
-    for i, row in enumerate(reader):
+        or
 
-        print(row)
+        (
+            row["GAME_ID"][:3] == TEAM
+            and
+            row["BAT_HOME_ID"] == "1"
+        )
 
-        if i == 9:
-            break
+    )
+
+    if not cleveland_batting:
+        continue
+
+    if current_game is None:
+
+        current_game = row["GAME_ID"]
+
+    if row["GAME_ID"] != current_game:
+
+        print(
+            current_game,
+            risp_hits,
+            "for",
+            risp_ab
+        )
+
+        current_game = row["GAME_ID"]
+
+        risp_ab = 0
+        risp_hits = 0
+
+    if (
+        row["BASE2_RUN_ID"]
+        or
+        row["BASE3_RUN_ID"]
+    ):
+
+        if row["AB_FL"] == "T":
+
+            risp_ab += 1
+
+            if int(row["H_CD"]) > 0:
+
+                risp_hits += 1
+
+if current_game is not None:
+
+    print(
+        current_game,
+        risp_hits,
+        "for",
+        risp_ab
+    )
