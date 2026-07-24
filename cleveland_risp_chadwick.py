@@ -178,14 +178,14 @@ for sample_file in event_files:
     
     if current_game is not None:
 
-    if (
-        risp_hits == 0
-        and
-        risp_ab >= 10
-    ):
-    
-        print(
-            current_game,
-            "0-for",
-            risp_ab
-        )
+        if (
+            risp_hits == 0
+            and
+            risp_ab >= 10
+        ):
+        
+            print(
+                current_game,
+                "0-for",
+                risp_ab
+            )
