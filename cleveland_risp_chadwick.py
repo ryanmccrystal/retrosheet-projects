@@ -91,10 +91,6 @@ for sample_file in event_files:
 
     sample_name = os.path.basename(sample_file)
 
-sample_dir = os.path.dirname(sample_file)
-
-sample_name = os.path.basename(sample_file)
-
     result = subprocess.run(
         [
             "cwevent",
