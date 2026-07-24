@@ -91,8 +91,10 @@ sample_dir = os.path.dirname(sample_file)
 sample_name = os.path.basename(sample_file)
 
 result = subprocess.run(
-    [
+   [
         "cwevent",
+        "-y",
+        "2020",
         "-n",
         "-f",
         "0,2,3,10,27,28,29,34,36,37",
