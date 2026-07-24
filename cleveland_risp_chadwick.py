@@ -85,7 +85,9 @@ print(
 
 print("\nTesting Chadwick...\n")
 
-for sample_file in event_files:
+for sample_file in event_files[:3]:
+
+    print(f"Processing {os.path.basename(sample_file)}")
 
     sample_dir = os.path.dirname(sample_file)
 
