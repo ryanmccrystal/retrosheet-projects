@@ -10,8 +10,8 @@ import requests
 
 TEAM = "CLE"
 
-START_YEAR = 2020
-END_YEAR = 2020
+START_YEAR = 2000
+END_YEAR = 2025
 
 DATA_DIR = "data"
 
@@ -87,20 +87,17 @@ print("\nTesting Chadwick...\n")
 
 for sample_file in event_files:
 
-    if os.path.basename(sample_file) != "2020CLE.EVA":
-        continue
-
-    print(f"Processing {os.path.basename(sample_file)}")
-
     sample_dir = os.path.dirname(sample_file)
 
     sample_name = os.path.basename(sample_file)
+
+    year = sample_name[:4]
 
     result = subprocess.run(
         [
             "cwevent",
             "-y",
-            "2020",
+            year,
             "-n",
             "-f",
             "0,1,2,3,10,27,28,29,36,37",
@@ -153,7 +150,7 @@ for sample_file in event_files:
             if (
                 risp_hits == 0
                 and
-                risp_ab >= 0
+                risp_ab >= 10
             ):
             
                 print(
@@ -190,7 +187,8 @@ for sample_file in event_files:
         ):
         
             print(
-                current_game,
-                "0-for",
-                risp_ab
+                f"{current_game[:3]} "
+                f"{current_game[3:11]} "
+                f"{'Home' if current_game[:3] == TEAM else 'Away'} "
+                f"0-for-{risp_ab}"
             )
