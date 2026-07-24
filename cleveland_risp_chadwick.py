@@ -85,7 +85,10 @@ print(
 
 print("\nTesting Chadwick...\n")
 
-for sample_file in event_files[:3]:
+for sample_file in event_files:
+
+    if os.path.basename(sample_file) != "2020CLE.EVA":
+        continue
 
     print(f"Processing {os.path.basename(sample_file)}")
 
@@ -150,7 +153,7 @@ for sample_file in event_files[:3]:
             if (
                 risp_hits == 0
                 and
-                risp_ab >= 10
+                risp_ab >= 0
             ):
             
                 print(
