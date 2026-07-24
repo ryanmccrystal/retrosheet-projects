@@ -85,7 +85,11 @@ print(
 
 print("\nTesting Chadwick...\n")
 
-sample_file = event_files[0]
+sample_file = os.path.join(
+    DATA_DIR,
+    "2020",
+    "2020CLE.EVA"
+)
 
 sample_dir = os.path.dirname(sample_file)
 
