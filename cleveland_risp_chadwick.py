@@ -1,4 +1,5 @@
 import os
+import csv
 import zipfile
 import subprocess
 import requests
@@ -91,24 +92,47 @@ sample_dir = os.path.dirname(sample_file)
 sample_name = os.path.basename(sample_file)
 
 result = subprocess.run(
-   [
+    [
         "cwevent",
         "-y",
         "2020",
         "-n",
         "-f",
-        "0,2,3,10,27,28,29,34,36,37",
+        "0,1,2,3,10,27,28,29,36,37",
         sample_name
     ],
     cwd=sample_dir,
     capture_output=True,
-    text=True
+    text=True,
+    check=True
 )
 
-print("Return code:", result.returncode)
+output_file = os.path.join(
+    sample_dir,
+    "sample_events.csv"
+)
 
-print("\nSTDOUT:")
-print(result.stdout)
+with open(
+    output_file,
+    "w",
+    encoding="utf-8"
+) as f:
 
-print("\nSTDERR:")
-print(result.stderr)
+    f.write(result.stdout)
+
+print(f"Saved {output_file}")
+
+with open(
+    output_file,
+    newline="",
+    encoding="utf-8"
+) as f:
+
+    reader = csv.DictReader(f)
+
+    for i, row in enumerate(reader):
+
+        print(row)
+
+        if i == 9:
+            break
