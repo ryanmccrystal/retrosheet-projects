@@ -84,24 +84,14 @@ print(
 
 print("\nTesting Chadwick...\n")
 
+print("\nContents of data directory:\n")
+
 sample_file = event_files[0]
 
-result = subprocess.run(
-    [
-        "cwevent",
-        "-n",
-        "-f",
-        "0,2,3,10,27,28,29,34,36,37",
-        sample_file
-    ],
-    capture_output=True,
-    text=True
-)
+print("Sample event file:")
+print(sample_file)
 
-print("Return code:", result.returncode)
+print("\nFiles in same folder:")
 
-print("\nSTDOUT:")
-print(result.stdout)
-
-print("\nSTDERR:")
-print(result.stderr)
+for filename in sorted(os.listdir(os.path.dirname(sample_file))):
+    print(filename)
