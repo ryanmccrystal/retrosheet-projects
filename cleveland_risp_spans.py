@@ -10,7 +10,7 @@ import requests
 
 TEAM = "CLE"
 
-START_YEAR = 2020
+START_YEAR = 2000
 END_YEAR = 2025
 
 SPAN = 4
