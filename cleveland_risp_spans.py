@@ -23,6 +23,53 @@ os.makedirs(DATA_DIR, exist_ok=True)
 games = []
 event_files = []
 
+def format_opponents(span):
+
+    parts = []
+
+    current = None
+
+    count = 0
+
+    for game in span:
+
+        label = (
+            f"{'vs' if game['home_away'] == 'Home' else 'at'} "
+            f"{game['opponent']}"
+        )
+
+        if label == current:
+
+            count += 1
+
+        else:
+
+            if current is not None:
+
+                if count == 1:
+
+                    parts.append(current)
+
+                else:
+
+                    parts.append(f"{current} ({count})")
+
+            current = label
+
+            count = 1
+
+    if current is not None:
+
+        if count == 1:
+
+            parts.append(current)
+
+        else:
+
+            parts.append(f"{current} ({count})")
+
+    return ", ".join(parts)
+
 # --------------------------------------------------
 # Download Event Files
 # --------------------------------------------------
@@ -290,9 +337,8 @@ print(f"Found {len(results)} qualifying spans.\n")
 for result in results[:25]:
 
     print(
-        result["start"],
-        result["end"],
-        result["hits"],
-        result["ab"],
+        f"{result['start']} – {result['end']}    "
+        f"{format_opponents(result['games'])}    "
+        f"{result['hits']}-for-{result['ab']}    "
         f"{result['avg']:.3f}"
     )
