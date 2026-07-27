@@ -36,6 +36,7 @@ jobs:
 
       - name: Verify Chadwick installation
         run: |
+          sudo ldconfig
           cwevent -h
 
       - name: Run script
