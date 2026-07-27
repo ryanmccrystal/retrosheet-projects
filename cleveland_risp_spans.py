@@ -10,7 +10,7 @@ import requests
 
 TEAM = "CLE"
 
-START_YEAR = 1901
+START_YEAR = 1910
 END_YEAR = 2025
 
 SPAN = 4
@@ -84,3 +84,41 @@ for year in range(
             )
 
 print(f"\nFound {len(event_files)} event files.")
+
+for sample_file in event_files:
+
+    sample_dir = os.path.dirname(sample_file)
+
+    sample_name = os.path.basename(sample_file)
+
+    year = sample_name[:4]
+
+    result = subprocess.run(
+        [
+            "cwevent",
+            "-y",
+            year,
+            "-n",
+            "-f",
+            "0,1,2,3,10,27,28,29,36,37",
+            sample_name
+        ],
+        cwd=sample_dir,
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    reader = csv.DictReader(
+        result.stdout.splitlines()
+    )
+
+    current_game = None
+
+    current_home_team = None
+
+    current_away_team = None
+
+    risp_ab = 0
+
+    risp_hits = 0
