@@ -242,6 +242,57 @@ for sample_file in event_files:
 
 games.sort(key=lambda g: g["date"])
 
-print(f"Collected {len(games)} Cleveland games.")
+results = []
 
-print(games[:10])
+for i in range(len(games) - SPAN + 1):
+
+    span = games[i:i + SPAN]
+
+    total_hits = sum(
+        game["hits"]
+        for game in span
+    )
+
+    total_ab = sum(
+        game["ab"]
+        for game in span
+    )
+
+    if total_ab < MIN_AB:
+        continue
+
+    avg = (
+        total_hits / total_ab
+        if total_ab
+        else 0
+    )
+
+    results.append(
+        {
+            "start": span[0]["date"],
+            "end": span[-1]["date"],
+            "games": span,
+            "hits": total_hits,
+            "ab": total_ab,
+            "avg": avg
+        }
+    )
+
+results.sort(
+    key=lambda r: (
+        r["avg"],
+        -r["ab"]
+    )
+)
+
+print(f"Found {len(results)} qualifying spans.\n")
+
+for result in results[:25]:
+
+    print(
+        result["start"],
+        result["end"],
+        result["hits"],
+        result["ab"],
+        f"{result['avg']:.3f}"
+    )
