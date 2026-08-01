@@ -13,7 +13,7 @@ TEAM = "CLE"
 START_YEAR = 1910
 END_YEAR = 2025
 
-MIN_AB = 20
+MIN_AB = 50
 
 DATA_DIR = "data"
 
