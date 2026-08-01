@@ -13,7 +13,6 @@ TEAM = "CLE"
 START_YEAR = 1910
 END_YEAR = 2025
 
-SPAN = 4
 MIN_AB = 20
 
 DATA_DIR = "data"
@@ -289,41 +288,56 @@ for sample_file in event_files:
 
 games.sort(key=lambda g: g["date"])
 
+# --------------------------------------------------
+# Group Games by Calendar Month
+# --------------------------------------------------
+
+monthly = {}
+
+for game in games:
+
+    month_key = game["date"][:7]
+
+    if month_key not in monthly:
+
+        monthly[month_key] = {
+            "hits": 0,
+            "ab": 0
+        }
+
+    monthly[month_key]["hits"] += game["hits"]
+    monthly[month_key]["ab"] += game["ab"]
+
+
+# --------------------------------------------------
+# Calculate Monthly RISP Batting Average
+# --------------------------------------------------
+
 results = []
 
-for i in range(len(games) - SPAN + 1):
+for month_key, stats in monthly.items():
 
-    span = games[i:i + SPAN]
+    hits = stats["hits"]
+    ab = stats["ab"]
 
-    total_hits = sum(
-        game["hits"]
-        for game in span
-    )
-
-    total_ab = sum(
-        game["ab"]
-        for game in span
-    )
-
-    if total_ab < MIN_AB:
+    if ab < MIN_AB:
         continue
 
-    avg = (
-        total_hits / total_ab
-        if total_ab
-        else 0
-    )
+    avg = hits / ab
 
     results.append(
         {
-            "start": span[0]["date"],
-            "end": span[-1]["date"],
-            "games": span,
-            "hits": total_hits,
-            "ab": total_ab,
+            "month": month_key,
+            "hits": hits,
+            "ab": ab,
             "avg": avg
         }
     )
+
+
+# --------------------------------------------------
+# Sort Lowest Batting Average First
+# --------------------------------------------------
 
 results.sort(
     key=lambda r: (
@@ -332,13 +346,27 @@ results.sort(
     )
 )
 
-print(f"Found {len(results)} qualifying spans.\n")
 
-for result in results[:25]:
+# --------------------------------------------------
+# Print Results
+# --------------------------------------------------
+
+from datetime import datetime
+
+for result in results[:50]:
+
+    month_name = datetime.strptime(
+        result["month"],
+        "%Y-%m"
+    ).strftime("%B %Y")
+
+    avg_display = (
+        f"{result['avg']:.3f}"
+        .lstrip("0")
+    )
 
     print(
-        f"{result['start']} – {result['end']}    "
-        f"{format_opponents(result['games'])}    "
+        f"{month_name}    "
         f"{result['hits']}-for-{result['ab']}    "
-        f"{result['avg']:.3f}"
+        f"{avg_display}"
     )
