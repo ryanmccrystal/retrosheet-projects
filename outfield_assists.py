@@ -121,7 +121,10 @@ for event_file in event_files:
 
         if row["GAME_ID"][0:3] != TEAM:
             continue
-
+        
+        if row["BAT_HOME_ID"] != "1":
+            continue
+        
         if (
             row["ASS1_FLD_CD"]
             or row["ASS2_FLD_CD"]
