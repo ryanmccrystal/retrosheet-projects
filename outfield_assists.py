@@ -23,6 +23,40 @@ game_assists = {}
 
 game_info = {}
 
+player_names = {}
+
+for letter in (
+    "0",
+    "1", "2", "3", "4", "5",
+    "6", "7", "8", "9",
+    "a", "b", "c", "d", "e", "f"
+):
+
+    player_url = (
+        "https://raw.githubusercontent.com/"
+        "chadwickbureau/register/master/data/"
+        f"people-{letter}.csv"
+    )
+
+    response = requests.get(player_url)
+
+    response.raise_for_status()
+
+    player_reader = csv.DictReader(
+        response.text.splitlines()
+    )
+
+    for player in player_reader:
+
+        retro_id = player["key_retro"]
+
+        if retro_id:
+
+            player_names[retro_id] = (
+                f"{player['name_first']} "
+                f"{player['name_last']}"
+            )
+
 # --------------------------------------------------
 # Download Event Files
 # --------------------------------------------------
@@ -268,10 +302,15 @@ for result in results:
         else "at"
     )
 
+    player_name = player_names.get(
+        result["player_id"],
+        result["player_id"]
+    )
+
     print(
         result["date"],
         location,
         result["opponent"],
-        result["player_id"],
+        player_name,
         result["assists"]
     )
