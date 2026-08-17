@@ -3,7 +3,6 @@ import csv
 import zipfile
 import subprocess
 import requests
-import io
 
 # --------------------------------------------------
 # Configuration
@@ -22,19 +21,42 @@ event_files = []
 
 game_assists = {}
 
-player_url = (
-    "https://raw.githubusercontent.com/"
-    "chadwickbureau/register/master/data/people.csv"
-)
+# --------------------------------------------------
+# Load Chadwick Player Register
+# --------------------------------------------------
 
-player_response = requests.get(player_url)
+player_names = {}
 
-player_response.raise_for_status()
+for letter in (
+    "1", "2", "3", "4", "5",
+    "6", "7", "8", "9",
+    "a", "b", "c", "d", "e", "f"
+):
 
-player_reader = csv.DictReader(
-    io.StringIO(player_response.text)
-)
+    player_url = (
+        "https://raw.githubusercontent.com/"
+        "chadwickbureau/register/master/data/"
+        f"people-{letter}.csv"
+    )
 
+    response = requests.get(player_url)
+
+    response.raise_for_status()
+
+    reader = csv.DictReader(
+        response.text.splitlines()
+    )
+
+    for player in reader:
+
+        retro_id = player["key_retro"]
+
+        if retro_id:
+
+            player_names[retro_id] = (
+                f"{player['name_first']} "
+                f"{player['name_last']}"
+            )
 player_names = {}
 
 for player in player_reader:
@@ -204,16 +226,6 @@ for game_id, players in game_assists.items():
                 f"{game_id[7:9]}-"
                 f"{game_id[9:11]}"
             )
-
-            home_team = game_id[:3]
-
-            if home_team == TEAM:
-
-                opponent = None
-
-            else:
-
-                opponent = "?"
 
             player_name = player_names.get(
                 player_id,
