@@ -21,54 +21,7 @@ event_files = []
 
 game_assists = {}
 
-# --------------------------------------------------
-# Load Chadwick Player Register
-# --------------------------------------------------
-
 player_names = {}
-
-for letter in (
-    "1", "2", "3", "4", "5",
-    "6", "7", "8", "9",
-    "a", "b", "c", "d", "e", "f"
-):
-
-    player_url = (
-        "https://raw.githubusercontent.com/"
-        "chadwickbureau/register/master/data/"
-        f"people-{letter}.csv"
-    )
-
-    response = requests.get(player_url)
-
-    response.raise_for_status()
-
-    reader = csv.DictReader(
-        response.text.splitlines()
-    )
-
-    for player in reader:
-
-        retro_id = player["key_retro"]
-
-        if retro_id:
-
-            player_names[retro_id] = (
-                f"{player['name_first']} "
-                f"{player['name_last']}"
-            )
-player_names = {}
-
-for player in reader:
-
-    retro_id = player["key_retro"]
-
-    if retro_id:
-
-        player_names[retro_id] = (
-            f"{player['name_first']} "
-            f"{player['name_last']}"
-        )
 
 # --------------------------------------------------
 # Download Event Files
@@ -135,7 +88,7 @@ print(
 )
 
 # --------------------------------------------------
-# Test Chadwick
+# Process Event Files
 # --------------------------------------------------
 
 for event_file in event_files:
@@ -152,7 +105,7 @@ for event_file in event_files:
         [
             "cwevent",
             "-y",
-            "1986",
+            str(START_YEAR),
             "-n",
             "-f",
             "0,1,2,3,23,24,25,29,91,92,93,94,95",
@@ -170,21 +123,33 @@ for event_file in event_files:
 
     for row in reader:
 
+        # ------------------------------------------
+        # Determine batting team
+        # ------------------------------------------
+
         if row["BAT_HOME_ID"] == "1":
 
             batting_team = row["GAME_ID"][0:3]
-        
+
         else:
-        
+
             batting_team = row["AWAY_TEAM_ID"]
-        
+
         if batting_team != TEAM:
             continue
-        
+
+        # ------------------------------------------
+        # Create game entry
+        # ------------------------------------------
+
         if row["GAME_ID"] not in game_assists:
 
             game_assists[row["GAME_ID"]] = {}
-        
+
+        # ------------------------------------------
+        # Examine all assist fields
+        # ------------------------------------------
+
         for assist_field in [
             "ASS1_FLD_CD",
             "ASS2_FLD_CD",
@@ -192,28 +157,51 @@ for event_file in event_files:
             "ASS4_FLD_CD",
             "ASS5_FLD_CD"
         ]:
-        
+
             assist_position = row[assist_field]
-        
-            if assist_position not in ("7", "8", "9"):
+
+            # Only interested in outfield assists
+            if assist_position not in (
+                "7",
+                "8",
+                "9"
+            ):
+
                 continue
-        
+
+            # --------------------------------------
+            # Determine individual fielder
+            # --------------------------------------
+
             if assist_position == "7":
+
                 player_id = row["POS7_FLD_ID"]
-        
+
             elif assist_position == "8":
+
                 player_id = row["POS8_FLD_ID"]
-        
+
             else:
+
                 player_id = row["POS9_FLD_ID"]
-        
+
+            # --------------------------------------
+            # Count assists by individual player
+            # --------------------------------------
+
             if player_id not in game_assists[row["GAME_ID"]]:
-        
+
                 game_assists[row["GAME_ID"]][player_id] = 0
-        
+
             game_assists[row["GAME_ID"]][player_id] += 1
 
-print("\nGames with 2+ assists by one outfielder:\n")
+# --------------------------------------------------
+# Output qualifying games
+# --------------------------------------------------
+
+print(
+    "\nGames with 2+ assists by one outfielder:\n"
+)
 
 for game_id, players in game_assists.items():
 
@@ -227,13 +215,8 @@ for game_id, players in game_assists.items():
                 f"{game_id[9:11]}"
             )
 
-            player_name = player_names.get(
-                player_id,
-                player_id
-            )
-
             print(
                 date,
-                player_name,
+                player_id,
                 assists
             )
