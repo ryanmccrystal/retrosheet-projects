@@ -1,0 +1,45 @@
+name: Test Outfield Assists
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-outfield-assists:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Python packages
+        run: |
+          pip install requests
+
+      - name: Install Chadwick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git autoconf automake libtool
+
+          git clone https://github.com/chadwickbureau/chadwick.git
+
+          cd chadwick
+
+          autoreconf -i
+          ./configure
+          make
+          sudo make install
+          sudo ldconfig
+
+      - name: Verify Chadwick
+        run: |
+          cwevent -h
+
+      - name: Run outfield assists search
+        run: |
+          python outfield_assists.py
