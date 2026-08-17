@@ -19,6 +19,8 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 event_files = []
 
+game_assists = {}
+
 # --------------------------------------------------
 # Download Event Files
 # --------------------------------------------------
@@ -130,16 +132,34 @@ for event_file in event_files:
         if batting_team != TEAM:
             continue
         
-        if (
-            row["ASS1_FLD_CD"] in ("7", "8", "9")
-            or
-            row["ASS2_FLD_CD"] in ("7", "8", "9")
-            or
-            row["ASS3_FLD_CD"] in ("7", "8", "9")
-            or
-            row["ASS4_FLD_CD"] in ("7", "8", "9")
-            or
-            row["ASS5_FLD_CD"] in ("7", "8", "9")
-        ):
+        if row["GAME_ID"] not in game_assists:
+
+            game_assists[row["GAME_ID"]] = {}
         
-            print(row)
+        for assist_field in [
+            "ASS1_FLD_CD",
+            "ASS2_FLD_CD",
+            "ASS3_FLD_CD",
+            "ASS4_FLD_CD",
+            "ASS5_FLD_CD"
+        ]:
+        
+            assist_position = row[assist_field]
+        
+            if assist_position not in ("7", "8", "9"):
+                continue
+        
+            if assist_position == "7":
+                player_id = row["POS7_FLD_ID"]
+        
+            elif assist_position == "8":
+                player_id = row["POS8_FLD_ID"]
+        
+            else:
+                player_id = row["POS9_FLD_ID"]
+        
+            if player_id not in game_assists[row["GAME_ID"]]:
+        
+                game_assists[row["GAME_ID"]][player_id] = 0
+        
+            game_assists[row["GAME_ID"]][player_id] += 1
