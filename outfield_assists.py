@@ -3,6 +3,7 @@ import csv
 import zipfile
 import subprocess
 import requests
+import io
 
 # --------------------------------------------------
 # Configuration
@@ -20,6 +21,32 @@ os.makedirs(DATA_DIR, exist_ok=True)
 event_files = []
 
 game_assists = {}
+
+player_url = (
+    "https://raw.githubusercontent.com/"
+    "chadwickbureau/register/master/data/people.csv"
+)
+
+player_response = requests.get(player_url)
+
+player_response.raise_for_status()
+
+player_reader = csv.DictReader(
+    io.StringIO(player_response.text)
+)
+
+player_names = {}
+
+for player in player_reader:
+
+    retro_id = player["key_retro"]
+
+    if retro_id:
+
+        player_names[retro_id] = (
+            f"{player['name_first']} "
+            f"{player['name_last']}"
+        )
 
 # --------------------------------------------------
 # Download Event Files
@@ -172,8 +199,29 @@ for game_id, players in game_assists.items():
 
         if assists >= 2:
 
-            print(
-                game_id,
+            date = (
+                f"{game_id[3:7]}-"
+                f"{game_id[7:9]}-"
+                f"{game_id[9:11]}"
+            )
+
+            home_team = game_id[:3]
+
+            if home_team == TEAM:
+
+                opponent = None
+
+            else:
+
+                opponent = "?"
+
+            player_name = player_names.get(
                 player_id,
+                player_id
+            )
+
+            print(
+                date,
+                player_name,
                 assists
             )
