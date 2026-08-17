@@ -59,7 +59,7 @@ for letter in (
             )
 player_names = {}
 
-for player in player_reader:
+for player in reader:
 
     retro_id = player["key_retro"]
 
