@@ -105,7 +105,7 @@ for event_file in event_files:
         [
             "cwevent",
             "-y",
-            sample_name[0:4]
+            sample_name[0:4],
             "-n",
             "-f",
             "0,1,2,3,23,24,25,29,91,92,93,94,95",
