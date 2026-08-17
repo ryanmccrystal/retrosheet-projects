@@ -10,8 +10,8 @@ import requests
 
 TEAM = "NYN"
 
-START_YEAR = 1986
-END_YEAR = 1986
+START_YEAR = 1961
+END_YEAR = 2025
 
 DATA_DIR = "data"
 
