@@ -119,10 +119,15 @@ for event_file in event_files:
 
     for row in reader:
 
-        if row["GAME_ID"][0:3] != TEAM:
-            continue
+        if row["BAT_HOME_ID"] == "1":
+
+            batting_team = row["GAME_ID"][0:3]
         
-        if row["BAT_HOME_ID"] != "1":
+        else:
+        
+            batting_team = row["AWAY_TEAM_ID"]
+        
+        if batting_team != TEAM:
             continue
         
         if (
