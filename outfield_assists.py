@@ -163,3 +163,17 @@ for event_file in event_files:
                 game_assists[row["GAME_ID"]][player_id] = 0
         
             game_assists[row["GAME_ID"]][player_id] += 1
+
+print("\nGames with 2+ assists by one outfielder:\n")
+
+for game_id, players in game_assists.items():
+
+    for player_id, assists in players.items():
+
+        if assists >= 2:
+
+            print(
+                game_id,
+                player_id,
+                assists
+            )
