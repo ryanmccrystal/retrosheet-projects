@@ -131,11 +131,15 @@ for event_file in event_files:
             continue
         
         if (
-            row["ASS1_FLD_CD"]
-            or row["ASS2_FLD_CD"]
-            or row["ASS3_FLD_CD"]
-            or row["ASS4_FLD_CD"]
-            or row["ASS5_FLD_CD"]
+            row["ASS1_FLD_CD"] in ("7", "8", "9")
+            or
+            row["ASS2_FLD_CD"] in ("7", "8", "9")
+            or
+            row["ASS3_FLD_CD"] in ("7", "8", "9")
+            or
+            row["ASS4_FLD_CD"] in ("7", "8", "9")
+            or
+            row["ASS5_FLD_CD"] in ("7", "8", "9")
         ):
-
+        
             print(row)
