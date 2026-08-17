@@ -21,7 +21,7 @@ event_files = []
 
 game_assists = {}
 
-player_names = {}
+game_info = {}
 
 # --------------------------------------------------
 # Download Event Files
@@ -138,13 +138,39 @@ for event_file in event_files:
         if batting_team != TEAM:
             continue
 
+        game_id = row["GAME_ID"]
+
+        # ------------------------------------------
+        # Determine opponent and home/away
+        # ------------------------------------------
+
+        home_team = game_id[0:3]
+
+        away_team = row["AWAY_TEAM_ID"]
+
+        if home_team == TEAM:
+
+            opponent = away_team
+            home_away = "Home"
+
+        else:
+
+            opponent = home_team
+            home_away = "Away"
+
+        # Save game information
+        game_info[game_id] = {
+            "opponent": opponent,
+            "home_away": home_away
+        }
+
         # ------------------------------------------
         # Create game entry
         # ------------------------------------------
 
-        if row["GAME_ID"] not in game_assists:
+        if game_id not in game_assists:
 
-            game_assists[row["GAME_ID"]] = {}
+            game_assists[game_id] = {}
 
         # ------------------------------------------
         # Examine all assist fields
@@ -169,10 +195,7 @@ for event_file in event_files:
 
                 continue
 
-            # --------------------------------------
             # Determine individual fielder
-            # --------------------------------------
-
             if assist_position == "7":
 
                 player_id = row["POS7_FLD_ID"]
@@ -185,23 +208,18 @@ for event_file in event_files:
 
                 player_id = row["POS9_FLD_ID"]
 
-            # --------------------------------------
             # Count assists by individual player
-            # --------------------------------------
+            if player_id not in game_assists[game_id]:
 
-            if player_id not in game_assists[row["GAME_ID"]]:
+                game_assists[game_id][player_id] = 0
 
-                game_assists[row["GAME_ID"]][player_id] = 0
-
-            game_assists[row["GAME_ID"]][player_id] += 1
+            game_assists[game_id][player_id] += 1
 
 # --------------------------------------------------
-# Output qualifying games
+# Build qualifying results
 # --------------------------------------------------
 
-print(
-    "\nGames with 2+ assists by one outfielder:\n"
-)
+results = []
 
 for game_id, players in game_assists.items():
 
@@ -215,8 +233,45 @@ for game_id, players in game_assists.items():
                 f"{game_id[9:11]}"
             )
 
-            print(
-                date,
-                player_id,
-                assists
+            results.append(
+                {
+                    "date": date,
+                    "game_id": game_id,
+                    "opponent": game_info[game_id]["opponent"],
+                    "home_away": game_info[game_id]["home_away"],
+                    "player_id": player_id,
+                    "assists": assists
+                }
             )
+
+# --------------------------------------------------
+# Sort chronologically
+# --------------------------------------------------
+
+results.sort(
+    key=lambda x: x["date"]
+)
+
+# --------------------------------------------------
+# Output
+# --------------------------------------------------
+
+print(
+    "\nGames with 2+ assists by one opposing outfielder:\n"
+)
+
+for result in results:
+
+    location = (
+        "vs"
+        if result["home_away"] == "Home"
+        else "at"
+    )
+
+    print(
+        result["date"],
+        location,
+        result["opponent"],
+        result["player_id"],
+        result["assists"]
+    )
