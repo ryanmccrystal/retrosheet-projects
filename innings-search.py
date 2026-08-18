@@ -125,6 +125,10 @@ for event_file in event_files:
         result.stdout.splitlines()
     )
 
+    print(
+        reader.fieldnames
+    )
+
     for row in reader:
 
         # ------------------------------------------
@@ -166,6 +170,6 @@ for event_file in event_files:
         # Add RBI
         # ------------------------------------------
 
-        games[game_id]["rbi"] += int(
-            row["RBI on Play"]
-        )
+        #games[game_id]["rbi"] += int(
+        #    row["RBI on Play"]
+        #)
