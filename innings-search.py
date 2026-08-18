@@ -10,7 +10,7 @@ import requests
 
 TEAM = "CLE"
 
-START_YEAR = 1901
+START_YEAR = 1990
 END_YEAR = 2025
 
 STAT = "RBI"
