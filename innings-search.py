@@ -125,10 +125,6 @@ for event_file in event_files:
         result.stdout.splitlines()
     )
 
-    print(
-        reader.fieldnames
-    )
-
     for row in reader:
 
         # ------------------------------------------
@@ -161,15 +157,14 @@ for event_file in event_files:
 
         if game_id not in games:
 
-            games[game_id] = {
-                "player": row["BAT_ID"],
-                "rbi": 0
-            }
-
-        # ------------------------------------------
-        # Add RBI
-        # ------------------------------------------
-
-        #games[game_id]["rbi"] += int(
-        #    row["RBI on Play"]
-        #)
+            games[game_id] = {}
+        
+        player_id = row["BAT_ID"]
+        
+        if player_id not in games[game_id]:
+        
+            games[game_id][player_id] = 0
+        
+        games[game_id][player_id] += int(
+            row["RBI_CT"]
+        )
