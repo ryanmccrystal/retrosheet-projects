@@ -168,3 +168,59 @@ for event_file in event_files:
         games[game_id][player_id] += int(
             row["RBI_CT"]
         )
+
+# --------------------------------------------------
+# Find qualifying performances
+# --------------------------------------------------
+
+results = []
+
+for game_id, players in games.items():
+
+    for player_id, rbi in players.items():
+
+        if rbi >= MIN_STAT:
+
+            date = (
+                f"{game_id[3:7]}-"
+                f"{game_id[7:9]}-"
+                f"{game_id[9:11]}"
+            )
+
+            results.append(
+                {
+                    "date": date,
+                    "game_id": game_id,
+                    "player_id": player_id,
+                    "rbi": rbi
+                }
+            )
+
+# --------------------------------------------------
+# Sort results
+# --------------------------------------------------
+
+results.sort(
+    key=lambda x: (
+        -x["rbi"],
+        x["date"]
+    )
+)
+
+# --------------------------------------------------
+# Output
+# --------------------------------------------------
+
+print(
+    "\nCleveland hitters with "
+    f"{MIN_STAT}+ {STAT} through "
+    f"{INNINGS} innings:\n"
+)
+
+for result in results:
+
+    print(
+        result["date"],
+        result["player_id"],
+        result["rbi"]
+    )
